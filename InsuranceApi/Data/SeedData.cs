@@ -37,5 +37,20 @@ public static class SeedData
             );
             await context.SaveChangesAsync();
         }
+
+        // Seed 5 sample vehicles
+        if (!context.Vehicles.Any())
+        {
+            var vehicles = new List<Vehicle>
+            {
+                new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "ABC123", Make = "Toyota", Model = "Camry", Year = 2020, Type = VehicleType.Private },
+                new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "XYZ789", Make = "Honda", Model = "Fit", Year = 2019, Type = VehicleType.Private },
+                new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "DEF456", Make = "Volvo", Model = "FH150", Year = 2021, Type = VehicleType.Commercial },
+                new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "GHI789", Make = "Nissan", Model = "Tiida", Year = 2018, Type = VehicleType.Private },
+                new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "JKL012", Make = "Mitsubishi", Model = "Fuso", Year = 2022, Type = VehicleType.Commercial }
+            };
+            context.Vehicles.AddRange(vehicles);
+            await context.SaveChangesAsync();
+        }
     }
 }

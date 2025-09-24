@@ -9,7 +9,7 @@ namespace InsuranceApi.Controllers;
 
 [ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = "Admin")] // Only admins can access
+// [Authorize(Policy = "Admin")] // Only admins can access
 public class AdminController : ControllerBase
 {
     private readonly InsuranceDbContext _context;

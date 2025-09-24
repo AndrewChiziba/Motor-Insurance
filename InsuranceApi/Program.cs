@@ -27,7 +27,7 @@ builder.Services.AddDbContext<InsuranceDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
         b => b
-            .MigrationsAssembly("MotorInsurance.API")
+            .MigrationsAssembly("InsuranceApi")
             .MapEnum<VehicleType>()
             .MapEnum<InsuranceType>())
             .UseSnakeCaseNamingConvention());

@@ -7,7 +7,7 @@ namespace InsuranceApi.Controllers;
 
 
 [ApiController]
-[Route("api/[controller]")]
+// [Route("api/[controller]")]
 [Authorize(Policy = "Client")] // Only clients can access
 public class PaymentsController : ControllerBase
 {
