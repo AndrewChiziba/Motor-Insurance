@@ -1,15 +1,14 @@
-using AutoMapper;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using InsuranceApi.Mappings;
 using InsuranceApi.Services;
 using InsuranceApi.Interfaces;
 using InsuranceApi.Data;
 using System.Text;
-using Npgsql;
 using InsuranceApi.Models;
+using Microsoft.EntityFrameworkCore;
+
 
 
 var builder = WebApplication.CreateBuilder(args);
@@ -21,13 +20,17 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// EF Core with PostgreSQL and snake_case naming
-NpgsqlConnection.GlobalTypeMapper.MapEnum<VehicleType>();
-NpgsqlConnection.GlobalTypeMapper.MapEnum<InsuranceType>();
+// EF Core with PostgreSQL and snake_case naming (modern enum mapping without GlobalTypeMapper)
+// Maps InsuranceType enum to PostgreSQL ENUM type)
+// Maps VehicleType enum to PostgreSQL ENUM type
 builder.Services.AddDbContext<InsuranceDbContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"), b =>
-        b.MigrationsAssembly("MotorInsurance.API"))
-        .UseSnakeCaseNamingConvention());
+    options.UseNpgsql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        b => b
+            .MigrationsAssembly("MotorInsurance.API")
+            .MapEnum<VehicleType>()
+            .MapEnum<InsuranceType>())
+            .UseSnakeCaseNamingConvention());
 
 // Identity with JWT
 builder.Services.AddIdentity<IdentityUser, IdentityRole>()
