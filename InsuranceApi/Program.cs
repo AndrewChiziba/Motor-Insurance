@@ -7,8 +7,6 @@ using InsuranceApi.Data;
 using System.Text;
 using InsuranceApi.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using System.Diagnostics;
 
 
 
@@ -21,9 +19,9 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// EF Core with PostgreSQL and snake_case naming (modern enum mapping without GlobalTypeMapper)
-// Maps InsuranceType enum to PostgreSQL ENUM type)
-// Maps VehicleType enum to PostgreSQL ENUM type
+// EF Core with PostgreSQL and snake_case naming
+// Map InsuranceType enum to PostgreSQL ENUM type)
+// Map VehicleType enum to PostgreSQL ENUM type
 builder.Services.AddDbContext<InsuranceDbContext>(options =>
     options.UseNpgsql(
         builder.Configuration.GetConnectionString("DefaultConnection"),
@@ -34,22 +32,33 @@ builder.Services.AddDbContext<InsuranceDbContext>(options =>
             .UseSnakeCaseNamingConvention());
 
 // Identity with JWT
-builder.Services.AddIdentity<IdentityUser, IdentityRole>()
-    .AddEntityFrameworkStores<InsuranceDbContext>()
-    .AddDefaultTokenProviders();
+builder.Services.AddIdentity<ApplicationUser, IdentityRole>()
+.AddEntityFrameworkStores<InsuranceDbContext>()
+.AddDefaultTokenProviders();
 
-var key = Encoding.ASCII.GetBytes(builder.Configuration["Jwt:Key"]);
-builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-    .AddJwtBearer(options =>
+// JWT authentication
+var jwtKey = builder.Configuration["Jwt:Key"] ?? throw new Exception("Jwt key missing");
+var jwtIssuer = builder.Configuration["Jwt:Issuer"];
+var jwtAudience = builder.Configuration["Jwt:Audience"];
+
+builder.Services.AddAuthentication(options =>
+{
+    options.DefaultAuthenticateScheme = "JwtBearer";
+    options.DefaultChallengeScheme = "JwtBearer";
+})
+.AddJwtBearer("JwtBearer", opts =>
+{
+    opts.TokenValidationParameters = new TokenValidationParameters
     {
-        options.TokenValidationParameters = new TokenValidationParameters
-        {
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKey = new SymmetricSecurityKey(key),
-            ValidateIssuer = false,
-            ValidateAudience = false
-        };
-    });
+        ValidateIssuer = true,
+        ValidateAudience = true,
+        ValidateLifetime = true,
+        ValidateIssuerSigningKey = true,
+        ValidIssuer = jwtIssuer,
+        ValidAudience = jwtAudience,
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+    };
+});
 
 builder.Services.AddAuthorization(options =>
 {
@@ -57,40 +66,56 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Client", policy => policy.RequireRole("Client"));
 });
 
-// DI for services
-builder.Services.AddScoped<IUserService, UserService>();
-builder.Services.AddScoped<IVehicleService, VehicleService>();
-builder.Services.AddScoped<IInsuranceService, InsuranceService>();
-builder.Services.AddScoped<IPaymentService, PaymentService>();
-
-// AutoMapper
-builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
-
 // Add CORS
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowFrontend",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173/")
+            policy.WithOrigins("http://localhost:5173")
                   .AllowAnyMethod()
                   .AllowAnyHeader()
-                  .AllowCredentials()
-                  .SetIsOriginAllowed((host) => true) // For debugging, allow all for now
-                  .WithExposedHeaders("Authorization");
+                  .AllowCredentials();
+            //   .SetIsOriginAllowed((host) => true) // For debugging, allow all for now
+            //   .WithExposedHeaders("Authorization");
         });
 });
 
 // Debug login
 
-builder.Services.AddLogging(logging =>
-{
-    logging.AddConsole();
-});
+// builder.Services.AddLogging(logging =>
+// {
+//     logging.AddConsole();
+// });
+
+// DI for services
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IVehicleService, VehicleService>();
+builder.Services.AddScoped<IInsuranceService, InsuranceService>();
+builder.Services.AddScoped<IPaymentService, PaymentService>();
+
+builder.Services.AddScoped<IAdminService, AdminService>();
+
+// AutoMapper
+builder.Services.AddAutoMapper(config => config.AddProfile<MappingProfile>());
+
 
 var app = builder.Build();
 
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
 
+    var db = services.GetRequiredService<InsuranceDbContext>();
+    db.Database.Migrate();
+
+    // Seed roles & admin
+    var authService = services.GetRequiredService<IAuthService>();
+    await authService.EnsureRolesAndAdminAsync();
+
+    // Seed domain data (insurance rates, vehicles, etc.)
+    await SeedData.Initialize(services);
+}
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
@@ -105,13 +130,6 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
-// Seed data
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    await SeedData.Initialize(services);
-}
 
 app.Run();
 

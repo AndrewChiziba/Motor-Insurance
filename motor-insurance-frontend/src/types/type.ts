@@ -39,10 +39,10 @@ export interface LoginDto {
   password: string;
 }
 
-export interface SignUpDto {
+export interface RegisterDto {
   email: string;
   password: string;
-  role: "Client" | "Admin";
+  fullName: string;
 }
 
 export interface CreateVehicleDto {

@@ -7,24 +7,24 @@ public static class SeedData
     public static async Task Initialize(IServiceProvider serviceProvider)
     {
         using var context = serviceProvider.GetRequiredService<InsuranceDbContext>();
-        var userManager = serviceProvider.GetRequiredService<UserManager<IdentityUser>>();
-        var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+        // var userManager = serviceProvider.GetRequiredService<UserManager<ApplicationUser>>();
+        // var roleManager = serviceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
-        // Seed roles
-        if (!await roleManager.RoleExistsAsync("Admin"))
-            await roleManager.CreateAsync(new IdentityRole("Admin"));
-        if (!await roleManager.RoleExistsAsync("Client"))
-            await roleManager.CreateAsync(new IdentityRole("Client"));
+        // // Seed roles
+        // if (!await roleManager.RoleExistsAsync("Admin"))
+        //     await roleManager.CreateAsync(new IdentityRole("Admin"));
+        // if (!await roleManager.RoleExistsAsync("Client"))
+        //     await roleManager.CreateAsync(new IdentityRole("Client"));
 
-        // Seed admin user
-        var adminEmail = "admin@example.com";
-        if (await userManager.FindByEmailAsync(adminEmail) == null)
-        {
-            var admin = new IdentityUser { UserName = adminEmail, Email = adminEmail };
-            var result = await userManager.CreateAsync(admin, "AdminPassword123!");
-            if (result.Succeeded)
-                await userManager.AddToRoleAsync(admin, "Admin");
-        }
+        // // Seed admin user
+        // var adminEmail = "admin@mail";
+        // if (await userManager.FindByEmailAsync(adminEmail) == null)
+        // {
+        //     var admin = new ApplicationUser { UserName = adminEmail, Email = adminEmail, DisplayName = "Admin" };
+        //     var result = await userManager.CreateAsync(admin, "AdminPassword123!");
+        //     if (result.Succeeded)
+        //         await userManager.AddToRoleAsync(admin, "Admin");
+        // }
 
         // Seed insurance rates
         if (!context.InsuranceRates.Any())

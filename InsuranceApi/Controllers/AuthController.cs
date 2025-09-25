@@ -10,28 +10,25 @@ namespace InsuranceApi.Controllers;
 [Route("api/[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly IUserService _userService;
-
-    public AuthController(IUserService userService)
+    private readonly IAuthService _authService;
+    public AuthController(IAuthService authService)
     {
-        _userService = userService;
+        _authService = authService;
     }
 
-    // Register a new user
     [HttpPost("register")]
-    public async Task<IActionResult> Register([FromBody] SignUpDto signUpDto)
+    public async Task<IActionResult> Register([FromBody] RegisterDto dto)
     {
-        var result = await _userService.RegisterAsync(signUpDto);
-        if (!result.Succeeded)
-            return BadRequest(result.Errors);
-        return Ok();
+        var res = await _authService.RegisterClientAsync(dto);
+        if (!res.Succeeded) return BadRequest(res.Errors);
+        return Created("", new { Message = "Account Successfully Created" });
     }
 
-    // Login and return JWT token
     [HttpPost("login")]
-    public async Task<IActionResult> Login([FromBody] LoginDto loginDto)
+    public async Task<IActionResult> Login([FromBody] LoginDto dto)
     {
-        var token = await _userService.LoginAsync(loginDto);
-        return Ok(new { token });
+        var token = await _authService.LoginAsync(dto);
+        if (token == null) return Unauthorized();
+        return Ok(token);
     }
 }

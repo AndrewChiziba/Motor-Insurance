@@ -4,7 +4,7 @@ using InsuranceApi.Models;
 
 namespace InsuranceApi.Data;
 
-public class InsuranceDbContext : IdentityDbContext
+public class InsuranceDbContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<Vehicle> Vehicles { get; set; }
     public DbSet<InsurancePolicy> InsurancePolicies { get; set; }

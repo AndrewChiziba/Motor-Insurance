@@ -5,32 +5,74 @@ using InsuranceApi.Models;
 using InsuranceApi.Interfaces;
 using InsuranceApi.Data;
 
-namespace InsuranceApi.Services;
-
-public class VehicleService : IVehicleService
+namespace InsuranceApi.Services
 {
-    private readonly InsuranceDbContext _context;
-    private readonly IMapper _mapper;
-
-    public VehicleService(InsuranceDbContext context, IMapper mapper)
+    public class VehicleService : IVehicleService
     {
-        _context = context;
-        _mapper = mapper;
-    }
+        private readonly InsuranceDbContext _context;
+        private readonly IMapper _mapper;
 
-    // Search for vehicle by registration number
-    public async Task<VehicleDto?> GetByRegistrationNumberAsync(string registrationNumber)
-    {
-        var vehicle = await _context.Vehicles.FirstOrDefaultAsync(v => v.RegistrationNumber == registrationNumber);
-        return _mapper.Map<VehicleDto>(vehicle);
-    }
+        public VehicleService(InsuranceDbContext context, IMapper mapper)
+        {
+            _context = context;
+            _mapper = mapper;
+        }
 
-    // Add a new vehicle
-    public async Task<VehicleDto> AddAsync(CreateVehicleDto createDto)
-    {
-        var vehicle = _mapper.Map<Vehicle>(createDto);
-        _context.Vehicles.Add(vehicle);
-        await _context.SaveChangesAsync();
-        return _mapper.Map<VehicleDto>(vehicle);
+        // Get all vehicles
+        public async Task<IEnumerable<VehicleDto>> GetAllAsync()
+        {
+            var vehicles = await _context.Vehicles.ToListAsync();
+            return _mapper.Map<IEnumerable<VehicleDto>>(vehicles);
+        }
+
+        // Get vehicle by ID
+        public async Task<VehicleDto?> GetByIdAsync(Guid id)
+        {
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            return _mapper.Map<VehicleDto>(vehicle);
+        }
+
+        // Search for vehicle by registration number
+        public async Task<VehicleDto?> GetByRegistrationNumberAsync(string registrationNumber)
+        {
+            var vehicle = await _context.Vehicles
+                .FirstOrDefaultAsync(v => v.RegistrationNumber == registrationNumber);
+            return _mapper.Map<VehicleDto>(vehicle);
+        }
+
+        // Add a new vehicle
+        public async Task<VehicleDto> AddAsync(CreateVehicleDto createDto)
+        {
+            var vehicle = _mapper.Map<Vehicle>(createDto);
+            _context.Vehicles.Add(vehicle);
+            await _context.SaveChangesAsync();
+            return _mapper.Map<VehicleDto>(vehicle);
+        }
+
+        // Update existing vehicle
+        public async Task<VehicleDto?> UpdateAsync(Guid id, UpdateVehicleDto updateDto)
+        {
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null) return null;
+
+            if (!string.IsNullOrWhiteSpace(updateDto.Make)) vehicle.Make = updateDto.Make;
+            if (!string.IsNullOrWhiteSpace(updateDto.Model)) vehicle.Model = updateDto.Model;
+            if (updateDto.Year.HasValue) vehicle.Year = updateDto.Year.Value;
+            if (updateDto.Type.HasValue) vehicle.Type = updateDto.Type.Value;
+
+            await _context.SaveChangesAsync();
+            return _mapper.Map<VehicleDto>(vehicle);
+        }
+
+        // Delete vehicle
+        public async Task<bool> DeleteAsync(Guid id)
+        {
+            var vehicle = await _context.Vehicles.FindAsync(id);
+            if (vehicle == null) return false;
+
+            _context.Vehicles.Remove(vehicle);
+            await _context.SaveChangesAsync();
+            return true;
+        }
     }
 }
