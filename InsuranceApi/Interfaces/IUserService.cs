@@ -5,6 +5,6 @@ namespace InsuranceApi.Interfaces;
 
 public interface IUserService
 {
-    Task<IdentityResult> SignUpAsync(SignUpDto signUpDto); // Register a new user
+    Task<IdentityResult> RegisterAsync(RegisterDto registerDto); // Register a new user
     Task<string> LoginAsync(LoginDto loginDto); // Generate JWT token
 }

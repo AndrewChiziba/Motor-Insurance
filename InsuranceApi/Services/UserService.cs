@@ -20,14 +20,14 @@ public class UserService : IUserService
     }
 
     // Register a new user with a role
-    public async Task<IdentityResult> SignUpAsync(SignUpDto signUpDto)
+    public async Task<IdentityResult> RegisterAsync(Dto registerDto)
     {
-        var user = new IdentityUser { UserName = signUpDto.Email, Email = signUpDto.Email };
-        var result = await _userManager.CreateAsync(user, signUpDto.Password);
+        var user = new IdentityUser { UserName = registerDto.Email, Email = registerDto.Email };
+        var result = await _userManager.CreateAsync(user, registerDto.Password);
 
         if (result.Succeeded)
         {
-            await _userManager.AddToRoleAsync(user, signUpDto.Role);
+            await _userManager.AddToRoleAsync(user, registerDto.Role);
         }
         return result;
     }

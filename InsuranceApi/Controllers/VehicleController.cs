@@ -5,9 +5,9 @@ using InsuranceApi.Interfaces;
 
 namespace InsuranceApi.Controllers;
 
-// [ApiController]
+[ApiController]
 [Route("api/[controller]")]
-[Authorize(Policy = "Client")] // Only clients can access
+// [Authorize(Policy = "Client")] // Only clients can access
 public class VehiclesController : ControllerBase
 {
     private readonly IVehicleService _vehicleService;

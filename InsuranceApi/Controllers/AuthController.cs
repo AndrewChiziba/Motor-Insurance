@@ -18,10 +18,10 @@ public class AuthController : ControllerBase
     }
 
     // Register a new user
-    [HttpPost("signup")]
-    public async Task<IActionResult> SignUp([FromBody] SignUpDto signUpDto)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] SignUpDto signUpDto)
     {
-        var result = await _userService.SignUpAsync(signUpDto);
+        var result = await _userService.RegisterAsync(signUpDto);
         if (!result.Succeeded)
             return BadRequest(result.Errors);
         return Ok();
