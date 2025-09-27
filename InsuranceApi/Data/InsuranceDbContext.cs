@@ -13,30 +13,63 @@ public class InsuranceDbContext : IdentityDbContext<ApplicationUser>
     public DbSet<InsuranceRate> InsuranceRates { get; set; }
 
     public InsuranceDbContext(DbContextOptions<InsuranceDbContext> options) : base(options) { }
-
     protected override void OnModelCreating(ModelBuilder builder)
-    {
-        base.OnModelCreating(builder);
+{
+    base.OnModelCreating(builder);
 
-        builder.HasPostgresEnum<VehicleType>();
-        builder.HasPostgresEnum<InsuranceType>();
+    builder.HasPostgresEnum<VehicleType>();
+    builder.HasPostgresEnum<InsuranceType>();
 
-        // Vehicle relationship (unidirectional from InsurancePolicy to Vehicle)
-        builder.Entity<InsurancePolicy>()
-            .HasOne<Vehicle>() // No navigation property needed
-            .WithMany()        // Vehicle can have many policies
-            .HasForeignKey(p => p.VehicleId);
+    // Ensure vehicle registration numbers are unique
+    builder.Entity<Vehicle>()
+        .HasIndex(v => v.RegistrationNumber)
+        .IsUnique();
 
-        // Quotation relationship (unidirectional from Quotation to Vehicle)
-        builder.Entity<Quotation>()
-            .HasOne<Vehicle>()
-            .WithMany()
-            .HasForeignKey(q => q.VehicleId);
+    // Vehicle relationship (unidirectional from InsurancePolicy to Vehicle)
+    builder.Entity<InsurancePolicy>()
+        .HasOne<Vehicle>() 
+        .WithMany()        
+        .HasForeignKey(p => p.VehicleId);
 
-        // Payment relationship (unidirectional from Payment to InsurancePolicy)
-        builder.Entity<Payment>()
-            .HasOne<InsurancePolicy>()
-            .WithMany() // No reverse navigation
-            .HasForeignKey(p => p.PolicyId);
-    }
+    // Quotation relationship
+    builder.Entity<Quotation>()
+        .HasOne<Vehicle>()
+        .WithMany()
+        .HasForeignKey(q => q.VehicleId);
+
+    // Payment relationship
+    builder.Entity<Payment>()
+        .HasOne<InsurancePolicy>()
+        .WithMany()
+        .HasForeignKey(p => p.PolicyId);
+}
+
+
+    //  protected override void OnModelCreating(ModelBuilder builder)
+    // {
+    //     base.OnModelCreating(builder);
+
+    //     builder.HasPostgresEnum<VehicleType>();
+    //     builder.HasPostgresEnum<InsuranceType>();
+
+
+    //     // Vehicle relationship (unidirectional from InsurancePolicy to Vehicle)
+    //     builder.Entity<InsurancePolicy>()
+        
+    //         .HasOne<Vehicle>() // No navigation property needed
+    //         .WithMany()        // Vehicle can have many policies
+    //         .HasForeignKey(p => p.VehicleId);
+
+    //     // Quotation relationship (unidirectional from Quotation to Vehicle)
+    //     builder.Entity<Quotation>()
+    //         .HasOne<Vehicle>()
+    //         .WithMany()
+    //         .HasForeignKey(q => q.VehicleId);
+
+    //     // Payment relationship (unidirectional from Payment to InsurancePolicy)
+    //     builder.Entity<Payment>()
+    //         .HasOne<InsurancePolicy>()
+    //         .WithMany() // No reverse navigation
+    //         .HasForeignKey(p => p.PolicyId);
+    // }
 }
