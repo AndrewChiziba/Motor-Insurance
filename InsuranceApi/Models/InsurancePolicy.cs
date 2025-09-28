@@ -16,11 +16,9 @@ public class InsurancePolicy
 
     public int DurationQuarters { get; set; }
 
-    public DateTime EndDate => StartDate.AddMonths(DurationQuarters * 3);
+    public DateTime EndDate { get; set; }
 
     public decimal Amount { get; set; }
-
-    public bool IsActive => DateTime.UtcNow >= StartDate && DateTime.UtcNow <= EndDate;
 
     [MaxLength(50)]
     public string Status { get; set; } = "Active";

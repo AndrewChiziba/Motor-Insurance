@@ -25,6 +25,16 @@ public class InsuranceController : ControllerBase
         var quote = await _insuranceService.GetQuoteAsync(createDto);
         return Ok(quote);
     }
+
+    //Check for active insurance policy
+    [HttpGet("active/{vehicleId}")]
+    public async Task<ActionResult<ActivePolicyResponseDto>> CheckActivePolicy(Guid vehicleId)
+    {
+        var result = await _insuranceService.GetActivePolicyAsync(vehicleId);
+        return Ok(result);
+    }
+
+
     // Create insurance policy
     [HttpPost]
     public async Task<ActionResult<InsurancePolicyDto>> CreatePolicy([FromBody] CreateInsurancePolicyDto createDto)

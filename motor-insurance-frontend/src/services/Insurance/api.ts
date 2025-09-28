@@ -1,36 +1,42 @@
 import api from "../../api/axios";
-import { type Vehicle } from "../Vehicle/api";
 
 export interface QuoteRequest {
   vehicleId: string;
-  insuranceType: number;
-}
-
-export interface QuoteOption {
-  quarters: number;
-  startDate: string;
-  endDate: string;
-  amount: number;
+  insuranceType: number; // 0 = Comprehensive, 1 = Third Party
 }
 
 export interface QuoteBaseResponse {
-  vehicle: Vehicle;
-  quotes: QuoteOption[];
-}
-
-
-export async function getBaseQuote(data: QuoteRequest) {
-  return api.post<QuoteBaseResponse>("/Insurance/quote", data);
+  vehicle: {
+    id: string;
+    registrationNumber: string;
+    make: string;
+    model: string;
+    year: number;
+    type: number;
+  };
+  insuranceType: number;
+  quotes: {
+    quarters: number;
+    startDate: string;
+    endDate: string;
+    amount: number;
+  }[];
 }
 
 export interface ActivePolicyResponse {
   hasActive: boolean;
-  type: number; // 0 = Comprehensive, 1 = Third Party
-  startDate: string;
-  endDate: string;
-  amount: number;
+  type?: number;       // 0 = Comprehensive, 1 = Third Party
+  startDate?: string;
+  endDate?: string;
+  amount?: number;
 }
 
+// get quote
+export async function getBaseQuote(data: QuoteRequest) {
+  return api.post<QuoteBaseResponse>("/Insurance/quote", data);
+}
+
+// check active policy
 export async function checkActivePolicy(vehicleId: string) {
   return api.get<ActivePolicyResponse>(`/Insurance/active/${vehicleId}`);
 }

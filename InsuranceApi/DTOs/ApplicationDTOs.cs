@@ -60,6 +60,15 @@ public record InsuranceQuoteDto(
     decimal Amount
 );
 
+public class ActivePolicyResponseDto
+{
+    public bool HasActive { get; set; }
+    public int? Type { get; set; } // 0 = Comprehensive, 1 = Third Party
+    public DateTime? StartDate { get; set; }
+    public DateTime? EndDate { get; set; }
+    public decimal? Amount { get; set; }
+}
+
 public record CreateInsurancePolicyDto(
     Guid QuoteId,
     bool ProceedWithOverlap = false

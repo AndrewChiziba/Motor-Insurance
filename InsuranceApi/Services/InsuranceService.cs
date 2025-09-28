@@ -58,10 +58,30 @@ public class InsuranceService : IInsuranceService
 
 
     // Check if vehicle has active insurance
-    public async Task<bool> HasActivePolicyAsync(Guid vehicleId)
+    public async Task<ActivePolicyResponseDto> GetActivePolicyAsync(Guid vehicleId)
     {
-        return await _context.InsurancePolicies
-            .AnyAsync(p => p.VehicleId == vehicleId && p.IsActive);
+        var now = DateTime.UtcNow;
+
+        var policy = await _context.InsurancePolicies
+            .Where(p => p.VehicleId == vehicleId &&
+                        p.StartDate <= now &&
+                        p.EndDate >= now)
+            .OrderByDescending(p => p.StartDate)
+            .FirstOrDefaultAsync();
+
+        if (policy == null)
+        {
+            return new ActivePolicyResponseDto { HasActive = false };
+        }
+
+        return new ActivePolicyResponseDto
+        {
+            HasActive = true,
+            Type = (int)policy.Type,
+            StartDate = policy.StartDate,
+            EndDate = policy.EndDate,
+            Amount = policy.Amount
+        };
     }
 
     // Create insurance policy with overlap check and user context
@@ -71,8 +91,8 @@ public class InsuranceService : IInsuranceService
         quotation.UserId = userId; // Update UserId from the authenticated user
         await _context.SaveChangesAsync();
 
-        if (await HasActivePolicyAsync(quotation.VehicleId) && !createDto.ProceedWithOverlap)
-            throw new Exception("Vehicle has active policy. Set ProceedWithOverlap to true to continue.");
+        // if (await HasActivePolicyAsync(quotation.VehicleId) && !createDto.ProceedWithOverlap)
+        //     throw new Exception("Vehicle has active policy. Set ProceedWithOverlap to true to continue.");
 
         var policy = new InsurancePolicy
         {
@@ -80,6 +100,7 @@ public class InsuranceService : IInsuranceService
             UserId = userId,
             Type = quotation.InsuranceType,
             StartDate = quotation.StartDate,
+            EndDate = quotation.StartDate.AddMonths(quotation.DurationQuarters * 3),
             DurationQuarters = quotation.DurationQuarters,
             Amount = quotation.Amount
         };
@@ -92,8 +113,9 @@ public class InsuranceService : IInsuranceService
     // Get all policies for a specific user
     public async Task<IEnumerable<InsurancePolicyDto>> GetPoliciesForUserAsync(string userId)
     {
+        var now = DateTime.UtcNow;
         var policies = await _context.InsurancePolicies
-            .Where(p => p.UserId == userId && p.IsActive)
+            .Where(p => p.UserId == userId && p.EndDate >= now)
             .ToListAsync();
 
         return _mapper.Map<IEnumerable<InsurancePolicyDto>>(policies);
