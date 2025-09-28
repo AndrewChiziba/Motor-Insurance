@@ -19,30 +19,43 @@ public class InsuranceService : IInsuranceService
     }
 
     // Calculate insurance quote based on rates
-    public async Task<InsuranceQuoteDto> GetQuoteAsync(CreateInsuranceQuoteDto createDto)
+    public async Task<InsuranceQuoteResponseDto> GetQuoteAsync(CreateInsuranceQuoteDto createDto)
     {
-        if (createDto.DurationQuarters < 1 || createDto.DurationQuarters > 4)
-            throw new ArgumentException("Duration must be between 1 and 4 quarters");
-
-        var vehicle = await _context.Vehicles.FindAsync(createDto.VehicleId) ?? throw new Exception("Vehicle not found");
-        var rate = await _context.InsuranceRates
-            .FirstOrDefaultAsync(r => r.VehicleType == vehicle.Type && r.InsuranceType == createDto.InsuranceType)
-            ?? throw new Exception("Rate not found");
-
-        var quotation = new Quotation
+        // Get vehicle
+        var vehicle = await _context.Vehicles.FindAsync(createDto.VehicleId);
+        if (vehicle == null)
         {
-            VehicleId = createDto.VehicleId,
-            UserId = "temp_user_id", // Will be set in CreatePolicy
-            InsuranceType = createDto.InsuranceType,
-            StartDate = createDto.StartDate,
-            DurationQuarters = createDto.DurationQuarters,
-            Amount = rate.RatePerQuarter * createDto.DurationQuarters
-        };
-        _context.Quotations.Add(quotation);
-        await _context.SaveChangesAsync();
+            throw new ArgumentException("Vehicle not found");
+        }
 
-        return _mapper.Map<InsuranceQuoteDto>(quotation);
+        // Get matching insurance rate
+        var rate = await _context.InsuranceRates
+            .FirstOrDefaultAsync(r => r.VehicleType == vehicle.Type && r.InsuranceType == createDto.InsuranceType);
+
+        if (rate == null || rate.RatePerQuarter <= 0)
+        {
+            throw new InvalidOperationException("No valid rate configured for this vehicle type and insurance type");
+        }
+
+        var startDate = DateTime.UtcNow.Date;
+
+        // Generate quotes for 1–4 quarters
+        var quotes = Enumerable.Range(1, 4).Select(q =>
+            new QuarterQuoteDto(
+                Quarters: q,
+                StartDate: startDate,
+                EndDate: startDate.AddMonths(q * 3),
+                Amount: rate.RatePerQuarter * q
+            )
+        ).ToList();
+
+        return new InsuranceQuoteResponseDto(
+            new VehicleDto(vehicle.Id, vehicle.RegistrationNumber, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.Type),
+            createDto.InsuranceType,
+            quotes
+        );
     }
+
 
     // Check if vehicle has active insurance
     public async Task<bool> HasActivePolicyAsync(Guid vehicleId)

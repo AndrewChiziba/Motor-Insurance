@@ -51,6 +51,7 @@ public record CreateInsuranceQuoteDto(
     int DurationQuarters
 );
 
+// Marked for removal
 public record InsuranceQuoteDto(
     Guid VehicleId,
     InsuranceType InsuranceType,
@@ -74,7 +75,18 @@ public record InsurancePolicyDto(
     decimal Amount,
     string Status
 );
+public record QuarterQuoteDto(
+    int Quarters,
+    DateTime StartDate,
+    DateTime EndDate,
+    decimal Amount
+);
 
+public record InsuranceQuoteResponseDto(
+    VehicleDto Vehicle,
+    InsuranceType InsuranceType,
+    IEnumerable<QuarterQuoteDto> Quotes
+);
 public record CreatePaymentDto(
     Guid PolicyId,
     string Method // Card or MobileMoney

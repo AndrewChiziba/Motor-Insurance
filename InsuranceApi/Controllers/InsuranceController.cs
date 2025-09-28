@@ -20,12 +20,11 @@ public class InsuranceController : ControllerBase
 
     // Get insurance quote
     [HttpPost("quote")]
-    public async Task<ActionResult<InsuranceQuoteDto>> GetQuote([FromBody] CreateInsuranceQuoteDto createDto)
+    public async Task<ActionResult<InsuranceQuoteResponseDto>> GetQuote([FromBody] CreateInsuranceQuoteDto createDto)
     {
         var quote = await _insuranceService.GetQuoteAsync(createDto);
         return Ok(quote);
     }
-
     // Create insurance policy
     [HttpPost]
     public async Task<ActionResult<InsurancePolicyDto>> CreatePolicy([FromBody] CreateInsurancePolicyDto createDto)
