@@ -4,6 +4,7 @@ using InsuranceApi.DTOs;
 using InsuranceApi.Models;
 using InsuranceApi.Interfaces;
 using InsuranceApi.Data;
+using System.Security.Cryptography.Xml;
 
 namespace InsuranceApi.Services
 {
@@ -36,14 +37,20 @@ namespace InsuranceApi.Services
         public async Task<VehicleDto?> GetByRegistrationNumberAsync(string registrationNumber)
         {
             var vehicle = await _context.Vehicles
-                .FirstOrDefaultAsync(v => v.RegistrationNumber == registrationNumber);
+                .FirstOrDefaultAsync(v => v.RegistrationNumber == registrationNumber.ToUpper());
             return _mapper.Map<VehicleDto>(vehicle);
         }
 
         // Add a new vehicle
         public async Task<VehicleDto> AddAsync(CreateVehicleDto createDto)
         {
-            var vehicle = _mapper.Map<Vehicle>(createDto);
+            // Transform vehicle registration to upper
+            var transformedDto = createDto with
+            {
+                RegistrationNumber = createDto.RegistrationNumber.ToUpper()
+            };
+
+            var vehicle = _mapper.Map<Vehicle>(transformedDto);
             _context.Vehicles.Add(vehicle);
             await _context.SaveChangesAsync();
             return _mapper.Map<VehicleDto>(vehicle);

@@ -18,7 +18,7 @@ public class MappingProfile : Profile
         CreateMap<CreateInsurancePolicyDto, InsurancePolicy>();
 
         // Quotation
-        CreateMap<Quotation, InsuranceQuoteDto>().ReverseMap();
+        CreateMap<Quotation, InsurancePolicyDto>().ReverseMap();
         CreateMap<CreateInsuranceQuoteDto, Quotation>();
 
         // Payment

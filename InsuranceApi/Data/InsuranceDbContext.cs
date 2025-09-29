@@ -8,7 +8,7 @@ public class InsuranceDbContext : IdentityDbContext<ApplicationUser>
 {
     public DbSet<Vehicle> Vehicles { get; set; }
     public DbSet<InsurancePolicy> InsurancePolicies { get; set; }
-    public DbSet<Quotation> Quotations { get; set; }
+    // public DbSet<Quotation> Quotations { get; set; }
     public DbSet<Payment> Payments { get; set; }
     public DbSet<InsuranceRate> InsuranceRates { get; set; }
 

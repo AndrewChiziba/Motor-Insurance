@@ -110,8 +110,8 @@ public record CreatePaymentDto(
 
 public record PaymentDto(
     Guid Id,
-    Guid PolicyId,
+    Guid InsurancePolicyId,
     decimal Amount,
-    string Method,
+    string PaymentMethod,
     string Status
 );

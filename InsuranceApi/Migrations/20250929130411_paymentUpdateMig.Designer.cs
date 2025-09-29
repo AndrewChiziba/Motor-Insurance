@@ -4,6 +4,7 @@ using InsuranceApi.Data;
 using InsuranceApi.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -12,9 +13,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace InsuranceApi.Migrations
 {
     [DbContext(typeof(InsuranceDbContext))]
-    partial class InsuranceDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250929130411_paymentUpdateMig")]
+    partial class paymentUpdateMig
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -269,15 +272,15 @@ namespace InsuranceApi.Migrations
                         .HasColumnName("vehicle_id1");
 
                     b.HasKey("Id")
-                        .HasName("pk_quotation");
+                        .HasName("pk_quotations");
 
                     b.HasIndex("VehicleId")
-                        .HasDatabaseName("ix_quotation_vehicle_id");
+                        .HasDatabaseName("ix_quotations_vehicle_id");
 
                     b.HasIndex("VehicleId1")
-                        .HasDatabaseName("ix_quotation_vehicle_id1");
+                        .HasDatabaseName("ix_quotations_vehicle_id1");
 
-                    b.ToTable("quotation", (string)null);
+                    b.ToTable("quotations", (string)null);
                 });
 
             modelBuilder.Entity("InsuranceApi.Models.Vehicle", b =>
@@ -514,12 +517,12 @@ namespace InsuranceApi.Migrations
                         .HasForeignKey("VehicleId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired()
-                        .HasConstraintName("fk_quotation_vehicles_vehicle_id");
+                        .HasConstraintName("fk_quotations_vehicles_vehicle_id");
 
                     b.HasOne("InsuranceApi.Models.Vehicle", "Vehicle")
                         .WithMany()
                         .HasForeignKey("VehicleId1")
-                        .HasConstraintName("fk_quotation_vehicles_vehicle_id1");
+                        .HasConstraintName("fk_quotations_vehicles_vehicle_id1");
 
                     b.Navigation("Vehicle");
                 });

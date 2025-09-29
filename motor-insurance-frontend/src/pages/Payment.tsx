@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { toast } from "react-toastify";
 import { processPayment } from "../services/api/payment";
 
 type PaymentMethod = "card" | "mobile";
@@ -11,7 +12,7 @@ interface Vehicle {
 }
 
 interface Policy {
-  id: string; // add this
+  id: string;
   type: number; // 0 = Comprehensive, 1 = Third Party
   startDate: string;
   endDate: string;
@@ -21,7 +22,6 @@ interface Policy {
   vehicleId: string;
   userId: string;
 }
-
 
 export default function PaymentPage() {
   const location = useLocation();
@@ -49,30 +49,38 @@ export default function PaymentPage() {
     setShowModal(true);
   };
 
- const handlePayment = async () => {
-  try {
-    const res = await processPayment({
-      insurancePolicyId: policy.id,
-      paymentMethod: paymentMethod === "card" ? "Card" : "MobileMoney",
-    });
+  const handlePayment = async () => {
+    try {
+      const res = await processPayment({
+        insurancePolicyId: policy.id,
+        paymentMethod: paymentMethod === "card" ? "Card" : "MobileMoney",
+      });
 
-    const payment = res.data;
+      const payment = res.data;
 
-    alert(
-      `Payment ${payment.status}\nYour policy has been ${
-        payment.status === "Completed" ? "activated" : "not activated"
-      }.`
-    );
+      if (payment.status === "Completed") {
+        toast.success("Payment completed! Your policy has been activated.", {
+          className: "toast-text",
+          position: "top-center",
+        });
+      } else {
+        toast.error("Payment not completed. Policy not activated.", {
+          className: "toast-text",
+          position: "top-center",
+        });
+      }
 
-    navigate("/Search");
-  } catch (err) {
-    console.error(err);
-    alert("Payment failed. Please try again.");
-  } finally {
-    setShowModal(false);
-  }
-};
-
+      navigate("/Search");
+    } catch (err) {
+      console.error(err);
+      toast.error("Payment failed. Please try again.", {
+        className: "toast-text",
+        position: "top-center",
+      });
+    } finally {
+      setShowModal(false);
+    }
+  };
 
   return (
     <div className="p-6 max-w-lg mx-auto">
@@ -84,8 +92,12 @@ export default function PaymentPage() {
       <p className="mb-2">
         Policy Type: {policy?.type === 0 ? "Comprehensive" : "Third Party"}
       </p>
-      <p className="mb-2">Start Date: {new Date(policy?.startDate).toLocaleDateString()}</p>
-      <p className="mb-2">End Date: {new Date(policy?.endDate).toLocaleDateString()}</p>
+      <p className="mb-2">
+        Start Date: {new Date(policy?.startDate).toLocaleDateString()}
+      </p>
+      <p className="mb-2">
+        End Date: {new Date(policy?.endDate).toLocaleDateString()}
+      </p>
       <p className="mb-4 font-semibold">Amount: {policy?.amount} ZMW</p>
 
       <button

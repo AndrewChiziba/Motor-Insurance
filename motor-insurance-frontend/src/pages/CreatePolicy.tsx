@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { checkActivePolicy, createPolicy } from "../services/api/insurance";
+import { checkActivePolicy, createPolicy, type ActivePolicyResponse } from "../services/api/insurance";
 import type { Vehicle } from "../services/api/vehicle";
 
 interface LocationState {
@@ -13,13 +13,13 @@ interface LocationState {
   endDate: string;
 }
 
-interface ActivePolicyResponse {
-  hasActive: boolean;
-  type: number; // 0 = Comprehensive, 1 = Third Party
-  startDate: string;
-  endDate: string;
-  amount: number;
-}
+// interface ActivePolicyResponse {
+//   hasActive: boolean;
+//   type: number; // 0 = Comprehensive, 1 = Third Party
+//   startDate: string;
+//   endDate: string;
+//   amount: number;
+// }
 
 const CreatePolicy = () => {
   const location = useLocation();
@@ -136,11 +136,11 @@ const CreatePolicy = () => {
             </p>
             <p>
               <strong>Start:</strong>{" "}
-              {new Date(activePolicy.startDate).toLocaleDateString()}
+              {new Date(activePolicy.startDate as string).toLocaleDateString()}
             </p>
             <p>
               <strong>End:</strong>{" "}
-              {new Date(activePolicy.endDate).toLocaleDateString()}
+              {new Date(activePolicy.endDate as string).toLocaleDateString()}
             </p>
             <p className="text-gray-700 mt-2">
               Do you still want to create a new policy (overlap allowed)?
