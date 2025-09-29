@@ -27,7 +27,7 @@
 //     );
 
 //     // pass plan to policy creation
-//     navigate("/policycreate", {
+//     navigate("/policysummary", {
 //       state: {
 //         vehicle,
 //         coverType,
@@ -94,9 +94,9 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { toast } from "react-toastify";
-import type { Vehicle } from "../services/Vehicle/api";
-import type { QuoteBaseResponse, ActivePolicyResponse } from "../services/Insurance/api";
-import { checkActivePolicy } from "../services/Insurance/api";
+import type { Vehicle } from "../services/api/vehicle";
+import type { QuoteBaseResponse, ActivePolicyResponse } from "../services/api/insurance";
+import { checkActivePolicy } from "../services/api/insurance";
 
 const Quote = () => {
   const location = useLocation();
@@ -131,7 +131,7 @@ const Quote = () => {
 
   const handleSelectQuarter = async (quarters: number, price: number, startDate: string, endDate: string) => {
     try {
-      const res = await checkActivePolicy(vehicle.id);
+      const res = await checkActivePolicy(vehicle.id as string);
 
       if (res.data.hasActive) {
         // 🚨 show warning modal instead of immediate navigation
@@ -142,7 +142,7 @@ const Quote = () => {
       }
 
       //  safe to proceed
-      navigate("/policycreate", {
+      navigate("/policysummary", {
         state: {
           vehicle,
           coverType,
@@ -163,7 +163,7 @@ const Quote = () => {
   const proceedAnyway = () => {
     if (!pendingPlan) return;
     setShowModal(false);
-    navigate("/policycreate", {
+    navigate("/policysummary", {
       state: {
         vehicle,
         coverType,

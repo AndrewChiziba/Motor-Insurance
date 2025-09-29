@@ -1,10 +1,12 @@
 using InsuranceApi.DTOs;
 using InsuranceApi.Interfaces;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 
 public class AuthService : IAuthService
 {
@@ -24,7 +26,17 @@ public class AuthService : IAuthService
 
     public async Task<IdentityResult> RegisterClientAsync(RegisterDto dto)
     {
-        var user = new ApplicationUser { UserName = dto.FullName, Email = dto.Email, FullName = dto.FullName };
+        //  var userExists = await _userManager.Users.FirstOrDefaultAsync(u => u.Email == dto.Email);
+        //     if (userExists != null)
+        //         return new { Message = "Emailr already registered!" };
+        var formatedFullName = Regex.Replace(dto.FullName, @"\s+", "_");
+
+        var user = new ApplicationUser
+        {
+            UserName = formatedFullName,
+            Email = dto.Email,
+            FullName = formatedFullName
+        };
         var result = await _userManager.CreateAsync(user, dto.Password);
         if (!result.Succeeded) return result;
 
@@ -44,10 +56,11 @@ public class AuthService : IAuthService
 
         var roles = await _userManager.GetRolesAsync(user);
         var role = roles.FirstOrDefault() ?? "Client";
+        var fullName = user.FullName.Replace("_", " ");
 
         var token = GenerateJwtToken(user, role);
         var expires = DateTime.UtcNow.AddMinutes(_config.GetValue<int>("Jwt:ExpiryMinutes"));
-        return new AuthResponseDto(token, expires.ToString("o"), role, user.Email ?? "");
+        return new AuthResponseDto(token, expires.ToString("o"), role, user.Email ?? "", fullName);
     }
 
     private string GenerateJwtToken(ApplicationUser user, string role)

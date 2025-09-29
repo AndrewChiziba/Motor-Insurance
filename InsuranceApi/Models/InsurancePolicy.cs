@@ -8,7 +8,7 @@ public class InsurancePolicy
 
     public Guid VehicleId { get; set; }
 
-    public string UserId { get; set; } = string.Empty;
+    public string UserId { get; set; }
 
     public InsuranceType Type { get; set; }
 
@@ -21,7 +21,7 @@ public class InsurancePolicy
     public decimal Amount { get; set; }
 
     [MaxLength(50)]
-    public string Status { get; set; } = "Active";
+    public string Status { get; set; } = "InActive";
 }
 
 public enum InsuranceType

@@ -19,20 +19,23 @@ public class PaymentService : IPaymentService
     }
 
     // Simulate payment and update policy
-    public async Task<PaymentDto> ProcessPaymentAsync(CreatePaymentDto createDto)
+    public async Task<PaymentDto> ProcessPaymentAsync(CreatePaymentDto createDto, string userId)
     {
-        var policy = await _context.InsurancePolicies.FindAsync(createDto.PolicyId) ?? throw new Exception("Policy not found");
+        var insurancePolicy = await _context.InsurancePolicies.FindAsync(createDto.InsurancePolicyId) ?? throw new Exception("Policy not found");
+        var now = DateTime.UtcNow;
 
         var payment = new Payment
         {
-            PolicyId = createDto.PolicyId,
-            Amount = policy.Amount,
-            Method = createDto.Method,
+            UserId = userId,
+            InsurancePolicyId = createDto.InsurancePolicyId,
+            Amount = insurancePolicy.Amount,
+            PaymentMethod = createDto.PaymentMethod,
+            PaymentDate = now,
             Status = "Completed" // Simulate successful payment
         };
         _context.Payments.Add(payment);
 
-        policy.Status = "Paid";
+        insurancePolicy.Status = "Active";
         await _context.SaveChangesAsync();
 
         return _mapper.Map<PaymentDto>(payment);

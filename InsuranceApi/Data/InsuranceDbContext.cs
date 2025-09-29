@@ -41,7 +41,7 @@ public class InsuranceDbContext : IdentityDbContext<ApplicationUser>
     builder.Entity<Payment>()
         .HasOne<InsurancePolicy>()
         .WithMany()
-        .HasForeignKey(p => p.PolicyId);
+        .HasForeignKey(p => p.InsurancePolicyId);
 }
 
 

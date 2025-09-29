@@ -6,7 +6,8 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import Register from "./pages/Register";
 import Quote from "./pages/Quote";
 import CoverType from "./pages/CoverType";
-import PolicyCreate from "./pages/PolicyCreate";
+import PolicySummary from "./pages/PolicySummary";
+import Payment from "./pages/Payment";
 
 function App() {
   return (
@@ -41,10 +42,18 @@ function App() {
         }
       />
       <Route
-        path="/policycreate"
+        path="/policysummary"
         element={
           <ProtectedRoute allowedRoles={["Client"]}>
-            <PolicyCreate/>
+            <PolicySummary/>
+          </ProtectedRoute>
+        }
+      />
+      <Route
+        path="/payment"
+        element={
+          <ProtectedRoute allowedRoles={["Client"]}>
+            <Payment/>
           </ProtectedRoute>
         }
       />

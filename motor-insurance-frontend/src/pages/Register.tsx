@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
-import { registerUser } from "../services/Auth/api";
+import { registerUser } from "../services/api/auth";
 
 const Register = () => {
   const navigate = useNavigate();

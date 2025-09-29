@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using InsuranceApi.DTOs;
 using InsuranceApi.Interfaces;
+using System.Security.Claims;
 
 namespace InsuranceApi.Controllers;
 
@@ -22,7 +23,8 @@ public class PaymentsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PaymentDto>> ProcessPayment([FromBody] CreatePaymentDto createDto)
     {
-        var payment = await _paymentService.ProcessPaymentAsync(createDto);
+        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var payment = await _paymentService.ProcessPaymentAsync(createDto, userId);
         return Ok(payment);
     }
 }

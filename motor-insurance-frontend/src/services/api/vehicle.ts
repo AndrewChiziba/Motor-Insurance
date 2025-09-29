@@ -1,7 +1,7 @@
-import api from "../../api/axios";
+import api from "./axios";
 
 export interface Vehicle {
-  id: string;
+  id?: string;
   registrationNumber: string;
   make: string;
   model: string;

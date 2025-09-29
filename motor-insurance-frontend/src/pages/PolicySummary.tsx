@@ -1,8 +1,8 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { checkActivePolicy } from "../services/Insurance/api";
-import type { Vehicle } from "../services/Vehicle/api";
+import { checkActivePolicy } from "../services/api/insurance";
+import type { Vehicle } from "../services/api/vehicle";
 
 interface LocationState {
   vehicle: Vehicle;
@@ -21,19 +21,19 @@ interface ActivePolicyResponse {
   amount: number;
 }
 
-const PolicyCreate = () => {
+const PolicySummary = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
   const state = location.state as LocationState | undefined;
 
-  // ✅ Hooks must come first
+  // Hooks must come first
   const [showModal, setShowModal] = useState(false);
   const [activePolicy, setActivePolicy] = useState<ActivePolicyResponse | null>(
     null
   );
 
-  // ✅ Guard against missing state
+  //  Guard against missing state
   useEffect(() => {
     if (!state) {
       toast.error("Missing policy details!", {
@@ -65,15 +65,27 @@ const PolicyCreate = () => {
 
   const { vehicle, coverType, quarters, price, startDate, endDate } = state;
 
-  const handleProceed = () => {
-    toast.success("Proceeding to create policy...", {
+   const handleProceed = () => {
+    toast.success("Proceeding to payment...", {
       className: "toast-text",
       position: "top-center",
     });
     setShowModal(false);
 
-    // TODO: call createPolicy API next stage
+    navigate("/payment", {
+      state: {
+        vehicle,
+        policy: {
+          type: coverType === "Comprehensive" ? 0 : 1,
+          startDate,
+          endDate,
+          amount: price,
+          quarters,
+        },
+      },
+    });
   };
+
 
   return (
     <div className="p-6 max-w-2xl mx-auto">
@@ -148,4 +160,4 @@ const PolicyCreate = () => {
   );
 };
 
-export default PolicyCreate;
+export default PolicySummary;

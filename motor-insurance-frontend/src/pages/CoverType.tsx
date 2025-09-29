@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { toast } from "react-toastify";
-import { getBaseQuote, type QuoteRequest, type QuoteBaseResponse } from "../services/Insurance/api";
-import type { Vehicle } from "../services/Vehicle/api";
+import { getBaseQuote, type QuoteRequest, type QuoteBaseResponse } from "../services/api/insurance";
+import type { Vehicle } from "../services/api/vehicle";
 
 const CoverType = () => {
   const location = useLocation();

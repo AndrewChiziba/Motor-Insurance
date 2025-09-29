@@ -41,7 +41,8 @@ public record AuthResponseDto(
     string Token,
     string Expires,
     string Role,
-    string Email
+    string Email,
+    string FullName
 );
 
 public record CreateInsuranceQuoteDto(
@@ -97,8 +98,8 @@ public record InsuranceQuoteResponseDto(
     IEnumerable<QuarterQuoteDto> Quotes
 );
 public record CreatePaymentDto(
-    Guid PolicyId,
-    string Method // Card or MobileMoney
+    Guid InsurancePolicyId,
+    string PaymentMethod // Card or MobileMoney
 );
 
 public record PaymentDto(

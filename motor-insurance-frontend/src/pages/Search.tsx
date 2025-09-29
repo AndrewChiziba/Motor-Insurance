@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { toast } from "react-toastify";
-import { searchVehicle, addVehicle, type Vehicle } from "../services/Vehicle/api";
+import { searchVehicle, addVehicle, type Vehicle } from "../services/api/vehicle";
 import { useNavigate } from "react-router-dom";
 
 const Search = () => {

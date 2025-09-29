@@ -65,7 +65,7 @@ public class InsuranceService : IInsuranceService
         var policy = await _context.InsurancePolicies
             .Where(p => p.VehicleId == vehicleId &&
                         p.StartDate <= now &&
-                        p.EndDate >= now)
+                        p.EndDate >= now && p.Status == "Active")
             .OrderByDescending(p => p.StartDate)
             .FirstOrDefaultAsync();
 
@@ -85,9 +85,11 @@ public class InsuranceService : IInsuranceService
     }
 
     // Create insurance policy with overlap check and user context
-    public async Task<InsurancePolicyDto> CreatePolicyAsync(CreateInsurancePolicyDto createDto, string userId)
+    public async Task<InsurancePolicyDto> CreatePolicyAsync(CreateInsurancePolicyDto createDto,string userId)
     {
         var quotation = await _context.Quotations.FindAsync(createDto.QuoteId) ?? throw new Exception("Quote not found");
+
+        
         quotation.UserId = userId; // Update UserId from the authenticated user
         await _context.SaveChangesAsync();
 
