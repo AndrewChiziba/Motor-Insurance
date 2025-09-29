@@ -7,7 +7,7 @@ public class Quotation
     public Guid VehicleId { get; set; }
     public Vehicle? Vehicle { get; set; }
 
-    public string UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
 
     public InsuranceType InsuranceType { get; set; }
 

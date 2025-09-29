@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { processPayment } from "../services/api/payment";
 
 type PaymentMethod = "card" | "mobile";
 
@@ -10,11 +11,17 @@ interface Vehicle {
 }
 
 interface Policy {
+  id: string; // add this
   type: number; // 0 = Comprehensive, 1 = Third Party
   startDate: string;
   endDate: string;
+  durationQuarters: number;
   amount: number;
+  status: string;
+  vehicleId: string;
+  userId: string;
 }
+
 
 export default function PaymentPage() {
   const location = useLocation();
@@ -42,22 +49,30 @@ export default function PaymentPage() {
     setShowModal(true);
   };
 
-  const handlePayment = async () => {
-    setShowModal(false);
-
-    // Replace this with backend API call later
-    console.log("Processing payment:", {
-      paymentMethod,
-      cardNumber,
-      expiry,
-      cvv,
-      phone,
-      provider,
+ const handlePayment = async () => {
+  try {
+    const res = await processPayment({
+      insurancePolicyId: policy.id,
+      paymentMethod: paymentMethod === "card" ? "Card" : "MobileMoney",
     });
 
-    alert("Payment Successful \nYour policy has been activated.");
+    const payment = res.data;
+
+    alert(
+      `Payment ${payment.status}\nYour policy has been ${
+        payment.status === "Completed" ? "activated" : "not activated"
+      }.`
+    );
+
     navigate("/Search");
-  };
+  } catch (err) {
+    console.error(err);
+    alert("Payment failed. Please try again.");
+  } finally {
+    setShowModal(false);
+  }
+};
+
 
   return (
     <div className="p-6 max-w-lg mx-auto">
@@ -69,8 +84,8 @@ export default function PaymentPage() {
       <p className="mb-2">
         Policy Type: {policy?.type === 0 ? "Comprehensive" : "Third Party"}
       </p>
-      <p className="mb-2">Start Date: {policy?.startDate}</p>
-      <p className="mb-2">End Date: {policy?.endDate}</p>
+      <p className="mb-2">Start Date: {new Date(policy?.startDate).toLocaleDateString()}</p>
+      <p className="mb-2">End Date: {new Date(policy?.endDate).toLocaleDateString()}</p>
       <p className="mb-4 font-semibold">Amount: {policy?.amount} ZMW</p>
 
       <button

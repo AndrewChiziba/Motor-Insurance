@@ -1,7 +1,7 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
-import { checkActivePolicy } from "../services/api/insurance";
+import { checkActivePolicy, createPolicy } from "../services/api/insurance";
 import type { Vehicle } from "../services/api/vehicle";
 
 interface LocationState {
@@ -21,7 +21,7 @@ interface ActivePolicyResponse {
   amount: number;
 }
 
-const PolicySummary = () => {
+const CreatePolicy = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -65,25 +65,32 @@ const PolicySummary = () => {
 
   const { vehicle, coverType, quarters, price, startDate, endDate } = state;
 
-   const handleProceed = () => {
-    toast.success("Proceeding to payment...", {
-      className: "toast-text",
-      position: "top-center",
-    });
-    setShowModal(false);
+  const handleProceed = async () => {
+    try {
+      const res = await createPolicy({
+        vehicleId: vehicle.id as string,
+        insuranceType: coverType === "Comprehensive" ? 0 : 1,
+        startDate,
+        endDate,
+        durationQuarters: quarters,
+        amount: price,
+        proceedWithOverlap: !!activePolicy, // if they chose "continue anyway"
+      });
 
-    navigate("/payment", {
-      state: {
-        vehicle,
-        policy: {
-          type: coverType === "Comprehensive" ? 0 : 1,
-          startDate,
-          endDate,
-          amount: price,
-          quarters,
+      const newPolicy = res.data;
+
+      navigate("/payment", {
+        state: {
+          vehicle,
+          policy: newPolicy,
         },
-      },
-    });
+      });
+    } catch {
+      toast.error("Failed to create policy", {
+        className: "toast-text",
+        position: "top-center",
+      });
+    }
   };
 
 
@@ -160,4 +167,4 @@ const PolicySummary = () => {
   );
 };
 
-export default PolicySummary;
+export default CreatePolicy;

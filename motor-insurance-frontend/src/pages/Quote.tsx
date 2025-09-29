@@ -27,7 +27,7 @@
 //     );
 
 //     // pass plan to policy creation
-//     navigate("/policysummary", {
+//     navigate("/createpolicy", {
 //       state: {
 //         vehicle,
 //         coverType,
@@ -142,7 +142,7 @@ const Quote = () => {
       }
 
       //  safe to proceed
-      navigate("/policysummary", {
+      navigate("/createpolicy", {
         state: {
           vehicle,
           coverType,
@@ -163,7 +163,7 @@ const Quote = () => {
   const proceedAnyway = () => {
     if (!pendingPlan) return;
     setShowModal(false);
-    navigate("/policysummary", {
+    navigate("/createpolicy", {
       state: {
         vehicle,
         coverType,

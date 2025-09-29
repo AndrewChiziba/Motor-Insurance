@@ -19,10 +19,10 @@ public class InsuranceService : IInsuranceService
     }
 
     // Calculate insurance quote based on rates
-    public async Task<InsuranceQuoteResponseDto> GetQuoteAsync(CreateInsuranceQuoteDto createDto)
+    public async Task<InsuranceQuoteResponseDto> GetQuoteAsync(CreateInsuranceQuoteDto createQuoteDto)
     {
         // Get vehicle
-        var vehicle = await _context.Vehicles.FindAsync(createDto.VehicleId);
+        var vehicle = await _context.Vehicles.FindAsync(createQuoteDto.VehicleId);
         if (vehicle == null)
         {
             throw new ArgumentException("Vehicle not found");
@@ -30,7 +30,7 @@ public class InsuranceService : IInsuranceService
 
         // Get matching insurance rate
         var rate = await _context.InsuranceRates
-            .FirstOrDefaultAsync(r => r.VehicleType == vehicle.Type && r.InsuranceType == createDto.InsuranceType);
+            .FirstOrDefaultAsync(r => r.VehicleType == vehicle.Type && r.InsuranceType == createQuoteDto.InsuranceType);
 
         if (rate == null || rate.RatePerQuarter <= 0)
         {
@@ -51,7 +51,7 @@ public class InsuranceService : IInsuranceService
 
         return new InsuranceQuoteResponseDto(
             new VehicleDto(vehicle.Id, vehicle.RegistrationNumber, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.Type),
-            createDto.InsuranceType,
+            createQuoteDto.InsuranceType,
             quotes
         );
     }
@@ -84,33 +84,58 @@ public class InsuranceService : IInsuranceService
         };
     }
 
-    // Create insurance policy with overlap check and user context
-    public async Task<InsurancePolicyDto> CreatePolicyAsync(CreateInsurancePolicyDto createDto,string userId)
+    // Create insurance policy after overlap check
+    public async Task<InsurancePolicyDto> CreatePolicyAsync(CreateInsurancePolicyDto createInsuranceDto, string userId)
     {
-        var quotation = await _context.Quotations.FindAsync(createDto.QuoteId) ?? throw new Exception("Quote not found");
+        // ensure vehicle exists
+        var vehicle = await _context.Vehicles.FindAsync(createInsuranceDto.VehicleId);
+        if (vehicle == null)
+            throw new Exception("Vehicle not found");
 
-        
-        quotation.UserId = userId; // Update UserId from the authenticated user
-        await _context.SaveChangesAsync();
+        // optional: check for overlap
+        // if (!dto.ProceedWithOverlap)
+        // {
+        //     var hasActive = await _context.InsurancePolicies.AnyAsync(p =>
+        //         p.VehicleId == dto.VehicleId &&
+        //         p.StartDate <= dto.StartDate &&
+        //         p.EndDate >= dto.StartDate &&
+        //         p.Status == "Active"
+        //     );
 
-        // if (await HasActivePolicyAsync(quotation.VehicleId) && !createDto.ProceedWithOverlap)
-        //     throw new Exception("Vehicle has active policy. Set ProceedWithOverlap to true to continue.");
+        //     if (hasActive)
+        //         throw new Exception("Active policy already exists for this vehicle");
+        // }
 
-        var policy = new InsurancePolicy
+        var insurancePolicy = new InsurancePolicy
         {
-            VehicleId = quotation.VehicleId,
+            VehicleId = createInsuranceDto.VehicleId,
             UserId = userId,
-            Type = quotation.InsuranceType,
-            StartDate = quotation.StartDate,
-            EndDate = quotation.StartDate.AddMonths(quotation.DurationQuarters * 3),
-            DurationQuarters = quotation.DurationQuarters,
-            Amount = quotation.Amount
+            Type = createInsuranceDto.InsuranceType,
+            StartDate = createInsuranceDto.StartDate,
+            EndDate = createInsuranceDto.StartDate.AddMonths(createInsuranceDto.DurationQuarters * 3),
+            DurationQuarters = createInsuranceDto.DurationQuarters,
+            Amount = createInsuranceDto.Amount,
+            Status = "Pending" // will flip to Active after payment
         };
-        _context.InsurancePolicies.Add(policy);
+
+        _context.InsurancePolicies.Add(insurancePolicy);
         await _context.SaveChangesAsync();
 
-        return _mapper.Map<InsurancePolicyDto>(policy);
+        return _mapper.Map<InsurancePolicyDto>(insurancePolicy);
     }
+
+    // InsuranceService.cs
+    // public async Task<InsurancePolicyDto> ActivatePolicyAsync(Guid policyId)
+    // {
+    //     var policy = await _context.InsurancePolicies.FindAsync(policyId);
+    //     if (policy == null) throw new Exception("Policy not found");
+
+    //     policy.Status = "Active";
+    //     await _context.SaveChangesAsync();
+
+    //     return _mapper.Map<InsurancePolicyDto>(policy);
+    // }
+
 
     // Get all policies for a specific user
     public async Task<IEnumerable<InsurancePolicyDto>> GetPoliciesForUserAsync(string userId)

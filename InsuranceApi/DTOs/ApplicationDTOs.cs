@@ -57,6 +57,7 @@ public record InsuranceQuoteDto(
     Guid VehicleId,
     InsuranceType InsuranceType,
     DateTime StartDate,
+    DateTime EndDate,
     int DurationQuarters,
     decimal Amount
 );
@@ -71,7 +72,11 @@ public class ActivePolicyResponseDto
 }
 
 public record CreateInsurancePolicyDto(
-    Guid QuoteId,
+    Guid VehicleId,
+    InsuranceType InsuranceType,
+    DateTime StartDate,
+    int DurationQuarters,
+    decimal Amount,
     bool ProceedWithOverlap = false
 );
 
@@ -81,6 +86,7 @@ public record InsurancePolicyDto(
     string UserId,
     InsuranceType Type,
     DateTime StartDate,
+    DateTime endDate,
     int DurationQuarters,
     decimal Amount,
     string Status

@@ -8,7 +8,7 @@ public class InsurancePolicy
 
     public Guid VehicleId { get; set; }
 
-    public string UserId { get; set; }
+    public string UserId { get; set; } = string.Empty;
 
     public InsuranceType Type { get; set; }
 
