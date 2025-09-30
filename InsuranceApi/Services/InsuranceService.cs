@@ -50,7 +50,7 @@ public class InsuranceService : IInsuranceService
         ).ToList();
 
         return new InsuranceQuoteResponseDto(
-            new VehicleDto(vehicle.Id, vehicle.RegistrationNumber, vehicle.Make, vehicle.Model, vehicle.Year, vehicle.Type),
+            new VehicleDto(vehicle.Id, vehicle.RegistrationNumber, vehicle.Make, vehicle.Model, vehicle.Colour, vehicle.Year, vehicle.Type),
             createQuoteDto.InsuranceType,
             quotes
         );

@@ -7,6 +7,7 @@ public record VehicleDto(
     string RegistrationNumber,
     string Make,
     string Model,
+    string Colour,
     int Year,
     VehicleType Type
 );
@@ -15,6 +16,7 @@ public record CreateVehicleDto(
     string RegistrationNumber,
     string Make,
     string Model,
+    string Colour,
     int Year,
     VehicleType Type
 );
@@ -23,6 +25,7 @@ public class UpdateVehicleDto
 {
     public string? Make { get; set; }
     public string? Model { get; set; }
+    public string? Colour { get; set; }
     public int? Year { get; set; }
     public VehicleType? Type { get; set; }
 }

@@ -64,6 +64,7 @@ namespace InsuranceApi.Services
 
             if (!string.IsNullOrWhiteSpace(updateDto.Make)) vehicle.Make = updateDto.Make;
             if (!string.IsNullOrWhiteSpace(updateDto.Model)) vehicle.Model = updateDto.Model;
+            if (!string.IsNullOrWhiteSpace(updateDto.Colour)) vehicle.Model = updateDto.Colour;
             if (updateDto.Year.HasValue) vehicle.Year = updateDto.Year.Value;
             if (updateDto.Type.HasValue) vehicle.Type = updateDto.Type.Value;
 

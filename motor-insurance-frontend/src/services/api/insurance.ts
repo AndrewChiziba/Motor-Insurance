@@ -11,6 +11,7 @@ export interface QuoteBaseResponse {
     registrationNumber: string;
     make: string;
     model: string;
+    colour: string;
     year: number;
     type: number;
   };

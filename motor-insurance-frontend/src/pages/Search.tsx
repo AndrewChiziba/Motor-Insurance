@@ -7,10 +7,12 @@ const Search = () => {
   const [registration, setRegistration] = useState("");
   const [vehicle, setVehicle] = useState<Vehicle | null>(null);
   const [showAddForm, setShowAddForm] = useState(false);
+  const [isSearching, setIsSearching] = useState(false);
   const [newVehicle, setNewVehicle] = useState<Vehicle>({
     registrationNumber: "",
     make: "",
     model: "",
+    colour: "",
     year: new Date().getFullYear(),
     type: 0,
   });
@@ -19,6 +21,7 @@ const Search = () => {
 
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsSearching(true);
     try {
       const res = await searchVehicle(registration.toUpperCase());
       setVehicle(res.data);
@@ -26,8 +29,9 @@ const Search = () => {
       toast.success("Vehicle found!", { className: "toast-text", position: "top-center" });
     } catch {
       setVehicle(null);
-      setShowAddForm(true);
-      toast.error("Vehicle not found. Please add it.", { className: "toast-text", position: "top-center" });
+      toast.error("Vehicle not found.", { className: "toast-text", position: "top-center" });
+    } finally {
+      setIsSearching(false);
     }
   };
 
@@ -50,100 +54,208 @@ const Search = () => {
     }
   };
 
+  const handleCancel = () => {
+    // Reload the page to reset everything
+    window.location.reload();
+  };
+
+  const showAddVehicleButton = !vehicle && !showAddForm;
+  // const showCancelButton = vehicle || showAddForm;
+  const showSearchForm = !showAddForm;
+
   return (
     <div className="p-6 max-w-2xl mx-auto">
-      <h1 className="text-2xl font-bold text-blue-600 mb-4">Search Vehicle</h1>
+      <h1 className="text-2xl font-bold text-blue-600 mb-6">Search Vehicle</h1>
 
-      {/* Search Form */}
-      <form onSubmit={handleSearch} className="flex gap-2 mb-6">
-        <input
-          type="text"
-          placeholder="Enter Registration Number"
-          value={registration}
-          onChange={(e) => setRegistration(e.target.value)}
-          className="flex-1 px-3 py-2 border rounded uppercase"
-          required
-        />
-        <button
-          type="submit"
-          className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
-        >
-          Search
-        </button>
-      </form>
+      {/* Search Form - Hidden when adding vehicle */}
+      {showSearchForm && (
+        <form onSubmit={handleSearch} className="mb-6">
+          <div className="flex gap-2 mb-4">
+            <input
+              type="text"
+              placeholder="Enter Registration Number, e.g. ABC123"
+              value={registration}
+              onChange={(e) => setRegistration(e.target.value.toUpperCase())}
+              className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+              disabled={isSearching}
+            />
+            <button
+              type="submit"
+              disabled={isSearching}
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 disabled:bg-blue-400 transition-colors"
+            >
+              {isSearching ? "Searching..." : "Search"}
+            </button>
+          </div>
+        </form>
+      )}
 
-      {/* Vehicle Found */}
-      {vehicle && (
-        <div className="p-4 border rounded bg-gray-50 mb-4">
-          <h2 className="font-semibold text-lg text-blue-600">Vehicle Found</h2>
-          <p><strong>Reg:</strong> {vehicle.registrationNumber}</p>
-          <p><strong>Make/Model:</strong> {vehicle.make} {vehicle.model}</p>
-          <p><strong>Year:</strong> {vehicle.year}</p>
-          <p><strong>Type:</strong> {vehicle.type === 0 ? "Private" : "Commercial"}</p>
-
+      {/* Add Vehicle Button - Only show when no vehicle found and not in add form */}
+      {showAddVehicleButton && (
+        <div className="text-center mb-6">
           <button
-            onClick={handleProceedToQuote}
-            className="mt-4 w-full bg-green-600 text-white py-2 rounded hover:bg-green-700"
+            onClick={() => setShowAddForm(true)}
+            className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors"
           >
-            Get Insurance Quote
+            Add Vehicle
           </button>
         </div>
       )}
 
-      {/* Add Vehicle Form */}
+      {/* Vehicle Found Section */}
+      {vehicle && (
+        <div className="p-6 border border-gray-200 rounded-lg bg-gray-50 mb-6">
+          <h2 className="font-semibold text-lg text-blue-600 mb-4">Vehicle Found</h2>
+          <div className="grid grid-cols-2 gap-4 mb-6">
+            <div>
+              <p className="text-sm text-gray-600">Registration</p>
+              <p className="font-medium">{vehicle.registrationNumber}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Make</p>
+              <p className="font-medium">{vehicle.make}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Model</p>
+              <p className="font-medium">{vehicle.model}</p>
+            </div>
+              <div>
+              <p className="text-sm text-gray-600">Colour</p>
+              <p className="font-medium">{vehicle.colour}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Year of Manufacture</p>
+              <p className="font-medium">{vehicle.year}</p>
+            </div>
+            <div>
+              <p className="text-sm text-gray-600">Type</p>
+              <p className="font-medium">{vehicle.type === 0 ? "Private" : "Commercial"}</p>
+            </div>
+          </div>
+
+          <div className="flex gap-3">
+            <button
+              onClick={handleCancel}
+              className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              onClick={handleProceedToQuote}
+              className="flex-1 bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700 transition-colors"
+            >
+              Get Insurance Quote
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Add Vehicle Form - Shows when Add Vehicle button is clicked */}
       {showAddForm && (
-        <form onSubmit={handleAddVehicle} className="space-y-4 p-4 border rounded bg-white shadow">
-          <h2 className="text-lg font-semibold text-blue-600">Add Vehicle</h2>
+        <form onSubmit={handleAddVehicle} className="space-y-4 p-6 border border-gray-200 rounded-lg bg-white shadow-sm">
+          <h2 className="text-xl font-semibold text-blue-600 mb-4">Add New Vehicle</h2>
 
-          <input
-            type="text"
-            placeholder="Registration Number"
-            value={newVehicle.registrationNumber}
-            onChange={(e) => setNewVehicle({ ...newVehicle, registrationNumber: e.target.value })}
-            className="w-full px-3 py-2 border rounded uppercase"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Make"
-            value={newVehicle.make}
-            onChange={(e) => setNewVehicle({ ...newVehicle, make: e.target.value })}
-            className="w-full px-3 py-2 border rounded"
-            required
-          />
-          <input
-            type="text"
-            placeholder="Model"
-            value={newVehicle.model}
-            onChange={(e) => setNewVehicle({ ...newVehicle, model: e.target.value })}
-            className="w-full px-3 py-2 border rounded"
-            required
-          />
-          <input
-            type="number"
-            placeholder="Year"
-            min={1900}
-            max={new Date().getFullYear()}
-            value={newVehicle.year}
-            onChange={(e) => setNewVehicle({ ...newVehicle, year: Number(e.target.value) })}
-            className="w-full px-3 py-2 border rounded"
-            required
-          />
-          <select
-            value={newVehicle.type}
-            onChange={(e) => setNewVehicle({ ...newVehicle, type: Number(e.target.value) })}
-            className="w-full px-3 py-2 border rounded"
-          >
-            <option value={0}>Private</option>
-            <option value={1}>Commercial</option>
-          </select>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Registration Number
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. ABC123"
+              value={newVehicle.registrationNumber}
+              onChange={(e) => setNewVehicle({ ...newVehicle, registrationNumber: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"
+              required
+            />
+          </div>
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded hover:bg-blue-700"
-          >
-            Add Vehicle
-          </button>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Make
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Toyota"
+              value={newVehicle.make}
+              onChange={(e) => setNewVehicle({ ...newVehicle, make: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Model
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. Corolla"
+              value={newVehicle.model}
+              onChange={(e) => setNewVehicle({ ...newVehicle, model: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Colour
+            </label>
+            <input
+              type="text"
+              placeholder="e.g. White"
+              value={newVehicle.colour}
+              onChange={(e) => setNewVehicle({ ...newVehicle, colour: e.target.value })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Year of Manufacture
+            </label>
+            <input
+              type="number"
+              placeholder="Year"
+              min={1900}
+              max={new Date().getFullYear()}
+              value={newVehicle.year}
+              onChange={(e) => setNewVehicle({ ...newVehicle, year: Number(e.target.value) })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Vehicle Type
+            </label>
+            <select
+              value={newVehicle.type}
+              onChange={(e) => setNewVehicle({ ...newVehicle, type: Number(e.target.value) })}
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value={0}>Private</option>
+              <option value={1}>Commercial</option>
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="button"
+              onClick={handleCancel}
+              className="flex-1 bg-gray-500 text-white py-2 px-4 rounded-lg hover:bg-gray-600 transition-colors"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Add Vehicle
+            </button>
+          </div>
         </form>
       )}
     </div>

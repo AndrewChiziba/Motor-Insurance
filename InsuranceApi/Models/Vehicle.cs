@@ -15,6 +15,9 @@ public class Vehicle
     [MaxLength(100)]
     public string Model { get; set; } = string.Empty;
 
+    [MaxLength(100)]
+    public string Colour { get; set; } = string.Empty;
+
     public int Year { get; set; }
 
     public VehicleType Type { get; set; } // Private or Commercial

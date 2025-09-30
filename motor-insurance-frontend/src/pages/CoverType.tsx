@@ -48,12 +48,30 @@ const CoverType = () => {
       <h1 className="text-2xl font-bold text-blue-600 mb-4">Select Cover Type</h1>
 
       {/* Vehicle Info */}
-      <div className="p-4 border rounded bg-gray-50 mb-6">
-        <h2 className="font-semibold text-lg text-blue-600">Vehicle</h2>
-        <p><strong>Reg:</strong> {vehicle.registrationNumber}</p>
-        <p><strong>Make/Model:</strong> {vehicle.make} {vehicle.model}</p>
-        <p><strong>Year:</strong> {vehicle.year}</p>
-        <p><strong>Type:</strong> {vehicle.type === 0 ? "Private" : "Commercial"}</p>
+      <div className="p-6 border border-gray-200 rounded-lg bg-gray-50 mb-6">
+        <h2 className="font-semibold text-lg text-blue-600 mb-4">Vehicle Details</h2>
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div>
+            <p className="text-sm text-gray-600">Registration: <span className="font-medium">{vehicle.registrationNumber}</span></p>
+            
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Make: <span className="font-medium">{vehicle.make}</span></p>
+            
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Model: <span className="font-medium">{vehicle.model}</span></p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Colour: <span className="font-medium">{vehicle.colour}</span></p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Year of Manufacture: <span className="font-medium">{vehicle.year}</span></p>
+          </div>
+          <div>
+            <p className="text-sm text-gray-600">Type: <span className="font-medium">{vehicle.type === 0 ? "Private" : "Commercial"}</span></p>
+          </div>
+        </div>
       </div>
 
       {/* Cover Type Form */}

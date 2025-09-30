@@ -5,6 +5,7 @@ export interface Vehicle {
   registrationNumber: string;
   make: string;
   model: string;
+  colour: string;
   year: number;
   type: number; // 0 = Private, 1 = Commercial
 }
