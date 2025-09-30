@@ -1,4 +1,77 @@
+// import { Routes, Route, Navigate } from "react-router-dom";
+// import Login from "./pages/Login";
+// import Search from "./pages/Search";
+// import AdminDashboard from "./pages/AdminDashboard";
+// import ProtectedRoute from "./components/ProtectedRoute";
+// import Register from "./pages/Register";
+// import Quote from "./pages/Quote";
+// import CoverType from "./pages/CoverType";
+// import CreatePolicy from "./pages/CreatePolicy";
+// import Payment from "./pages/Payment";
+
+// function App() {
+//   return (
+//     <Routes>
+//       <Route path="/" element={<Navigate to="/login" />} />
+//       <Route path="/register" element={<Register />} />
+//       <Route path="/login" element={<Login />} />
+
+//       {/* Protected Routes */}
+//       <Route
+//         path="/search"
+//         element={
+//           <ProtectedRoute allowedRoles={["Client"]}>
+//             <Search />
+//           </ProtectedRoute>
+//         }
+//       />
+//       <Route
+//         path="/covertype"
+//         element={
+//           <ProtectedRoute allowedRoles={["Client"]}>
+//             <CoverType />
+//           </ProtectedRoute>
+//         }
+//       />
+//       <Route
+//         path="/quote"
+//         element={
+//           <ProtectedRoute allowedRoles={["Client"]}>
+//             <Quote/>
+//           </ProtectedRoute>
+//         }
+//       />
+//       <Route
+//         path="/createpolicy"
+//         element={
+//           <ProtectedRoute allowedRoles={["Client"]}>
+//             <CreatePolicy/>
+//           </ProtectedRoute>
+//         }
+//       />
+//       <Route
+//         path="/payment"
+//         element={
+//           <ProtectedRoute allowedRoles={["Client"]}>
+//             <Payment/>
+//           </ProtectedRoute>
+//         }
+//       />
+//       <Route
+//         path="/admin"
+//         element={
+//           <ProtectedRoute allowedRoles={["Admin"]}>
+//             <AdminDashboard />
+//           </ProtectedRoute>
+//         }
+//       />
+//     </Routes>
+//   );
+// }
+
+// export default App;
 import { Routes, Route, Navigate } from "react-router-dom";
+import { ProgressProvider } from "./contexts/ProgressContext";
 import Login from "./pages/Login";
 import Search from "./pages/Search";
 import AdminDashboard from "./pages/AdminDashboard";
@@ -11,61 +84,63 @@ import Payment from "./pages/Payment";
 
 function App() {
   return (
-    <Routes>
-      <Route path="/" element={<Navigate to="/login" />} />
-      <Route path="/register" element={<Register />} />
-      <Route path="/login" element={<Login />} />
+    <ProgressProvider>
+      <Routes>
+        <Route path="/" element={<Navigate to="/login" />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/login" element={<Login />} />
 
-      {/* Protected Routes */}
-      <Route
-        path="/search"
-        element={
-          <ProtectedRoute allowedRoles={["Client"]}>
-            <Search />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/covertype"
-        element={
-          <ProtectedRoute allowedRoles={["Client"]}>
-            <CoverType />
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/quote"
-        element={
-          <ProtectedRoute allowedRoles={["Client"]}>
-            <Quote/>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/createpolicy"
-        element={
-          <ProtectedRoute allowedRoles={["Client"]}>
-            <CreatePolicy/>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/payment"
-        element={
-          <ProtectedRoute allowedRoles={["Client"]}>
-            <Payment/>
-          </ProtectedRoute>
-        }
-      />
-      <Route
-        path="/admin"
-        element={
-          <ProtectedRoute allowedRoles={["Admin"]}>
-            <AdminDashboard />
-          </ProtectedRoute>
-        }
-      />
-    </Routes>
+        {/* Protected Routes */}
+        <Route
+          path="/search"
+          element={
+            <ProtectedRoute allowedRoles={["Client"]}>
+              <Search />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/covertype"
+          element={
+            <ProtectedRoute allowedRoles={["Client"]}>
+              <CoverType />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/quote"
+          element={
+            <ProtectedRoute allowedRoles={["Client"]}>
+              <Quote/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/createpolicy"
+          element={
+            <ProtectedRoute allowedRoles={["Client"]}>
+              <CreatePolicy/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/payment"
+          element={
+            <ProtectedRoute allowedRoles={["Client"]}>
+              <Payment/>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/admin"
+          element={
+            <ProtectedRoute allowedRoles={["Admin"]} useLayout={false}>
+              <AdminDashboard />
+            </ProtectedRoute>
+          }
+        />
+      </Routes>
+    </ProgressProvider>
   );
 }
 

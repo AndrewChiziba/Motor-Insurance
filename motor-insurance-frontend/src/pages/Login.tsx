@@ -17,9 +17,9 @@ const Login = () => {
     e.preventDefault();
     try {
       const res = await loginUser(form);
-      const { token, role, email, fullname } = res.data;
+      const { token, role, email, fullName,expires } = res.data;
 
-      login(token, role, email, fullname);
+      login(token, role, email, fullName, expires);
       toast.success("Login successful", {
         className: "toast-text",
         position: "top-center",
