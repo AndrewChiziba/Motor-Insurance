@@ -2,7 +2,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsuranceApi", "InsuranceApi\InsuranceApi.csproj", "{1DC42797-7249-6771-9DC8-827C325A1D25}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "InsuranceApi", "InsuranceApi", "{8AA3FA9F-68E5-4D0E-DC55-7E6B19D50812}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InsuranceApi", "InsuranceApi\src\InsuranceApi.csproj", "{4CE9CD35-1CEC-9264-E0D6-11AB72D57E3A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -10,15 +12,18 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{1DC42797-7249-6771-9DC8-827C325A1D25}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{1DC42797-7249-6771-9DC8-827C325A1D25}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{1DC42797-7249-6771-9DC8-827C325A1D25}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{1DC42797-7249-6771-9DC8-827C325A1D25}.Release|Any CPU.Build.0 = Release|Any CPU
+		{4CE9CD35-1CEC-9264-E0D6-11AB72D57E3A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{4CE9CD35-1CEC-9264-E0D6-11AB72D57E3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{4CE9CD35-1CEC-9264-E0D6-11AB72D57E3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{4CE9CD35-1CEC-9264-E0D6-11AB72D57E3A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{4CE9CD35-1CEC-9264-E0D6-11AB72D57E3A} = {8AA3FA9F-68E5-4D0E-DC55-7E6B19D50812}
+	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {D2F2906F-60EC-45E0-8759-8039FF33EDE0}
+		SolutionGuid = {97CD81DB-A272-4C68-9EBE-62E905E871CB}
 	EndGlobalSection
 EndGlobal
