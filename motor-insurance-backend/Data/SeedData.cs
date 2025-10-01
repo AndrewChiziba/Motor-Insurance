@@ -47,7 +47,7 @@ public static class SeedData
                 new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "BBA1212", Make = "Honda", Model = "Fit", Colour = "Red", Year = 2011, Type = VehicleType.Private },
                 new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "DEF456", Make = "Volvo", Model = "FH150", Colour = "White", Year = 2021, Type = VehicleType.Commercial },
                 new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "GHI789", Make = "Nissan", Model = "Tiida", Colour = "Black", Year = 2018, Type = VehicleType.Private },
-                new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "JKL012", Make = "Mitsubishi", Model = "Fuso", Colour = "Gray", Year = 20, Type = VehicleType.Commercial }
+                new Vehicle { Id = Guid.NewGuid(), RegistrationNumber = "JKL012", Make = "Mitsubishi", Model = "Fuso", Colour = "Gray", Year = 2002, Type = VehicleType.Commercial }
             };
             context.Vehicles.AddRange(vehicles);
             await context.SaveChangesAsync();

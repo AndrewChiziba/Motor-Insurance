@@ -86,6 +86,7 @@ builder.Services.AddCors(options =>
 
 // DI for services
 builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IVehicleService, VehicleService>();
 builder.Services.AddScoped<IInsuranceService, InsuranceService>();
 builder.Services.AddScoped<IPaymentService, PaymentService>();

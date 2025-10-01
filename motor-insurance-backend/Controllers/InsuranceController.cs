@@ -50,14 +50,14 @@ public class InsuranceController : ControllerBase
     }
 
     // Get all policies for the authenticated client
-    [HttpGet]
-    public async Task<ActionResult<IEnumerable<InsurancePolicyDto>>> GetMyPolicies()
+    [HttpGet("client-policies")]
+    public async Task<ActionResult<IEnumerable<ClientPolicyDto>>> GetClientPolicies()
     {
-       var userId = User.FindFirst("UserId")?.Value;
+        var userId = User.FindFirst("UserId")?.Value;
         if (string.IsNullOrEmpty(userId))
             return Unauthorized("User not authenticated");
 
-        var policies = await _insuranceService.GetPoliciesForUserAsync(userId);
+        var policies = await _insuranceService.GetClientPoliciesAsync(userId);
         return Ok(policies);
     }
 }

@@ -42,6 +42,22 @@ export interface CreatePolicyRequest {
   proceedWithOverlap?: boolean;
 }
 
+export interface ClientPolicy {
+  policyId: string;
+  registrationNumber: string;
+  make: string;
+  model: string;
+  colour: string;
+  year: number;
+  vehicleType: number;
+  insuranceType: number;
+  startDate: string;
+  endDate: string;
+  amount: number;
+  status: string;
+  durationQuarters: number;
+}
+
 // get quote
 export async function getBaseQuote(data: QuoteRequest) {
   return api.post<QuoteBaseResponse>("/Insurance/quote", data);

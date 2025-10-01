@@ -29,6 +29,19 @@ public class UpdateVehicleDto
     public int? Year { get; set; }
     public VehicleType? Type { get; set; }
 }
+
+public class UpdateInsuranceRateDto
+{
+    public decimal RatePerQuarter { get; set; }
+}
+
+public class CreateAdminDto
+{
+    public string Email { get; set; } = string.Empty;
+    public string Password { get; set; } = string.Empty;
+    public string FullName { get; set; } = string.Empty;
+}
+
 public record LoginDto(
     string Email,
     string Password
@@ -118,3 +131,19 @@ public record PaymentDto(
     string PaymentMethod,
     string Status
 );
+
+ public record ClientPolicyDto(
+        Guid PolicyId,
+        string RegistrationNumber,
+        string Make,
+        string Model,
+        string Colour,
+        int Year,
+        int VehicleType,
+        int InsuranceType,
+        DateTime StartDate,
+        DateTime EndDate,
+        decimal Amount,
+        string Status,
+        int DurationQuarters
+    );

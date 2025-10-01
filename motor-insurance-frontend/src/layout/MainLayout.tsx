@@ -10,7 +10,7 @@ interface MainLayoutProps {
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   const location = useLocation();
   
-  // Define routes that should show progress bar
+  //  routes that show progress bar
   const showProgressBar = ['/covertype', '/quote', '/createpolicy', '/payment'].includes(location.pathname);
 
   return (

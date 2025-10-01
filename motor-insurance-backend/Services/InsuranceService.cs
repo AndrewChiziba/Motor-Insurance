@@ -91,7 +91,7 @@ public class InsuranceService : IInsuranceService
         var vehicle = await _context.Vehicles.FindAsync(createInsuranceDto.VehicleId);
         if (vehicle == null)
             throw new Exception("Vehicle not found");
-            
+
         var insurancePolicy = new InsurancePolicy
         {
             VehicleId = createInsuranceDto.VehicleId,
@@ -110,27 +110,77 @@ public class InsuranceService : IInsuranceService
         return _mapper.Map<InsurancePolicyDto>(insurancePolicy);
     }
 
-    // InsuranceService.cs
-    // public async Task<InsurancePolicyDto> ActivatePolicyAsync(Guid policyId)
-    // {
-    //     var policy = await _context.InsurancePolicies.FindAsync(policyId);
-    //     if (policy == null) throw new Exception("Policy not found");
-
-    //     policy.Status = "Active";
-    //     await _context.SaveChangesAsync();
-
-    //     return _mapper.Map<InsurancePolicyDto>(policy);
-    // }
-
-
-    // Get all policies for a specific user
-    public async Task<IEnumerable<InsurancePolicyDto>> GetPoliciesForUserAsync(string userId)
+    // Get clients policies
+    public async Task<IEnumerable<ClientPolicyDto>> GetClientPoliciesAsyncToRefactor(string userId)
     {
         var now = DateTime.UtcNow;
+
+        // Get the active policies for the user
         var policies = await _context.InsurancePolicies
-            .Where(p => p.UserId == userId && p.EndDate >= now)
+            .Where(p => p.UserId == userId && p.EndDate >= now && p.Status == "Active")
+            .OrderByDescending(p => p.StartDate)
             .ToListAsync();
 
-        return _mapper.Map<IEnumerable<InsurancePolicyDto>>(policies);
+        // Get all vehicle IDs from the policies
+        var vehicleIds = policies.Select(p => p.VehicleId).Distinct().ToList();
+
+        // Get all vehicles in one query
+        var vehicles = await _context.Vehicles
+            .Where(v => vehicleIds.Contains(v.Id))
+            .ToDictionaryAsync(v => v.Id, v => v);
+
+        // Combine policies with their vehicles
+        return policies.Select(p =>
+        {
+            var vehicle = vehicles.GetValueOrDefault(p.VehicleId);
+
+            return new ClientPolicyDto(
+                PolicyId: p.Id,
+                RegistrationNumber: vehicle?.RegistrationNumber ?? "N/A",
+                Make: vehicle?.Make ?? "N/A",
+                Model: vehicle?.Model ?? "N/A",
+                Colour: vehicle?.Colour ?? "N/A",
+                Year: vehicle?.Year ?? 0,
+                VehicleType: vehicle != null ? (int)vehicle.Type : 0,
+                InsuranceType: (int)p.Type,
+                StartDate: p.StartDate,
+                EndDate: p.EndDate,
+                Amount: p.Amount,
+                Status: p.Status,
+                DurationQuarters: p.DurationQuarters
+            );
+        });
+    }
+    public async Task<IEnumerable<ClientPolicyDto>> GetClientPoliciesAsync(string userId)
+    {
+        var now = DateTime.UtcNow;
+
+        var policyData = await (from policy in _context.InsurancePolicies
+                                join vehicle in _context.Vehicles on policy.VehicleId equals vehicle.Id
+                                where policy.UserId == userId &&
+                                      policy.EndDate >= now &&
+                                      policy.Status == "Active"
+                                orderby policy.StartDate descending
+                                select new
+                                {
+                                    Policy = policy,
+                                    Vehicle = vehicle
+                                }).ToListAsync();
+
+        return policyData.Select(x => new ClientPolicyDto(
+            PolicyId: x.Policy.Id,
+            RegistrationNumber: x.Vehicle.RegistrationNumber,
+            Make: x.Vehicle.Make,
+            Model: x.Vehicle.Model,
+            Colour: x.Vehicle.Colour,
+            Year: x.Vehicle.Year,
+            VehicleType: (int)x.Vehicle.Type,
+            InsuranceType: (int)x.Policy.Type,
+            StartDate: x.Policy.StartDate,
+            EndDate: x.Policy.EndDate,
+            Amount: x.Policy.Amount,
+            Status: x.Policy.Status,
+            DurationQuarters: x.Policy.DurationQuarters
+        ));
     }
 }
