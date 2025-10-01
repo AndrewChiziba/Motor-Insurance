@@ -91,21 +91,7 @@ public class InsuranceService : IInsuranceService
         var vehicle = await _context.Vehicles.FindAsync(createInsuranceDto.VehicleId);
         if (vehicle == null)
             throw new Exception("Vehicle not found");
-
-        // optional: check for overlap
-        // if (!dto.ProceedWithOverlap)
-        // {
-        //     var hasActive = await _context.InsurancePolicies.AnyAsync(p =>
-        //         p.VehicleId == dto.VehicleId &&
-        //         p.StartDate <= dto.StartDate &&
-        //         p.EndDate >= dto.StartDate &&
-        //         p.Status == "Active"
-        //     );
-
-        //     if (hasActive)
-        //         throw new Exception("Active policy already exists for this vehicle");
-        // }
-
+            
         var insurancePolicy = new InsurancePolicy
         {
             VehicleId = createInsuranceDto.VehicleId,

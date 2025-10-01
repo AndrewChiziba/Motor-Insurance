@@ -39,7 +39,9 @@ public class InsuranceController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<InsurancePolicyDto>> CreatePolicy([FromBody] CreateInsurancePolicyDto createDto)
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        // Get userid from claims
+        var userId = User.FindFirst("UserId")?.Value;
+
         if (string.IsNullOrEmpty(userId))
             return Unauthorized("User not authenticated");
 
@@ -47,23 +49,11 @@ public class InsuranceController : ControllerBase
         return CreatedAtAction(nameof(CreatePolicy), policy);
     }
 
-    // Activate insurance policy
-    // [HttpPatch("{policyId}/activate")]
-    // public async Task<ActionResult<InsurancePolicyDto>> ActivatePolicy(Guid policyId)
-    // {
-    //     var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-    //     if (string.IsNullOrEmpty(userId))
-    //         return Unauthorized("User not authenticated");
-
-    //     var policy = await _insuranceService.ActivatePolicyAsync(policyId);
-    //     return Ok(policy);
-    // }
-
     // Get all policies for the authenticated client
     [HttpGet]
     public async Task<ActionResult<IEnumerable<InsurancePolicyDto>>> GetMyPolicies()
     {
-        var userId = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+       var userId = User.FindFirst("UserId")?.Value;
         if (string.IsNullOrEmpty(userId))
             return Unauthorized("User not authenticated");
 

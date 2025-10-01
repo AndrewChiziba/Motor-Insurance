@@ -1,6 +1,5 @@
 Motor-Insurance.sln
-InsuranceApi/bin
-InsuranceApi/obj
-InsuranceApi/appsettings.json
+motor-insurance-backend/bin
+motor-insurance-backend/obj
+motor-insurance-backend/appsettings.json
 motor-insurance-frontend/node_modules
-motor-insurance-fe/node_modules

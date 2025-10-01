@@ -23,7 +23,7 @@ public class PaymentsController : ControllerBase
     [HttpPost]
     public async Task<ActionResult<PaymentDto>> ProcessPayment([FromBody] CreatePaymentDto createDto)
     {
-        var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+        var userId = User.FindFirst("UserId")?.Value;
         var payment = await _paymentService.ProcessPaymentAsync(createDto, userId);
         return Ok(payment);
     }

@@ -134,7 +134,7 @@ const Search = () => {
               <p className="font-medium">{vehicle.colour}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Year of Manufacture</p>
+              <p className="text-sm text-gray-600">Manufacture Year</p>
               <p className="font-medium">{vehicle.year}</p>
             </div>
             <div>

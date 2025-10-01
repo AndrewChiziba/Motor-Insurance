@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using InsuranceApi.DTOs;
 using InsuranceApi.Interfaces;
+using System.Security.Claims;
 
 namespace InsuranceApi.Controllers
 {

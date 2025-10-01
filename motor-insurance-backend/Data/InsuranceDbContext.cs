@@ -44,32 +44,4 @@ public class InsuranceDbContext : IdentityDbContext<ApplicationUser>
         .HasForeignKey(p => p.InsurancePolicyId);
 }
 
-
-    //  protected override void OnModelCreating(ModelBuilder builder)
-    // {
-    //     base.OnModelCreating(builder);
-
-    //     builder.HasPostgresEnum<VehicleType>();
-    //     builder.HasPostgresEnum<InsuranceType>();
-
-
-    //     // Vehicle relationship (unidirectional from InsurancePolicy to Vehicle)
-    //     builder.Entity<InsurancePolicy>()
-        
-    //         .HasOne<Vehicle>() // No navigation property needed
-    //         .WithMany()        // Vehicle can have many policies
-    //         .HasForeignKey(p => p.VehicleId);
-
-    //     // Quotation relationship (unidirectional from Quotation to Vehicle)
-    //     builder.Entity<Quotation>()
-    //         .HasOne<Vehicle>()
-    //         .WithMany()
-    //         .HasForeignKey(q => q.VehicleId);
-
-    //     // Payment relationship (unidirectional from Payment to InsurancePolicy)
-    //     builder.Entity<Payment>()
-    //         .HasOne<InsurancePolicy>()
-    //         .WithMany() // No reverse navigation
-    //         .HasForeignKey(p => p.PolicyId);
-    // }
 }

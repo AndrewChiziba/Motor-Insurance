@@ -61,7 +61,7 @@ const Quote = () => {
               <p className="text-sm text-gray-600">Colour: <span className="font-medium">{vehicle.colour}</span></p>
             </div>
             <div>
-              <p className="text-sm text-gray-600">Year of Manufacture: <span className="font-medium">{vehicle.year}</span> </p>
+              <p className="text-sm text-gray-600">Manufacture Year: <span className="font-medium">{vehicle.year}</span> </p>
             </div>
             <div>
               <p className="text-sm text-gray-600">Type: <span className="font-medium">{vehicle.type === 0 ? "Private" : "Commercial"}</span> </p>

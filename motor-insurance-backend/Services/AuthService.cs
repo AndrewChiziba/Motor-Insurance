@@ -2,6 +2,7 @@ using InsuranceApi.DTOs;
 using InsuranceApi.Interfaces;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration.UserSecrets;
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
@@ -33,7 +34,7 @@ public class AuthService : IAuthService
 
         var user = new ApplicationUser
         {
-            UserName = formatedFullName,
+            UserName = dto.Email,
             Email = dto.Email,
             FullName = formatedFullName
         };
@@ -54,6 +55,9 @@ public class AuthService : IAuthService
         if (user == null) return null;
         if (!await _userManager.CheckPasswordAsync(user, dto.Password)) return null;
 
+        
+        // Console.WriteLine("user: " + user.Id.ToString());
+
         var roles = await _userManager.GetRolesAsync(user);
         var role = roles.FirstOrDefault() ?? "Client";
         var fullName = user.FullName.Replace("_", " ");
@@ -68,7 +72,8 @@ public class AuthService : IAuthService
         var claims = new List<Claim>
         {
             new Claim(JwtRegisteredClaimNames.Sub, user.Email ?? ""),
-            new Claim(ClaimTypes.NameIdentifier, user.Id),
+            // new Claim(ClaimTypes.NameIdentifier, user.Id.ToString()), //get overwritten with username
+            new Claim("UserId", user.Id.ToString()),
             new Claim(ClaimTypes.Email, user.Email ?? ""),
             new Claim(ClaimTypes.Role, role),
             new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())

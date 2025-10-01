@@ -66,7 +66,7 @@ const CoverType = () => {
             <p className="text-sm text-gray-600">Colour: <span className="font-medium">{vehicle.colour}</span></p>
           </div>
           <div>
-            <p className="text-sm text-gray-600">Year of Manufacture: <span className="font-medium">{vehicle.year}</span></p>
+            <p className="text-sm text-gray-600">Manufacture Year: <span className="font-medium">{vehicle.year}</span></p>
           </div>
           <div>
             <p className="text-sm text-gray-600">Type: <span className="font-medium">{vehicle.type === 0 ? "Private" : "Commercial"}</span></p>
@@ -77,7 +77,7 @@ const CoverType = () => {
       {/* Cover Type Form */}
       <form onSubmit={handleSubmit} className="space-y-4 p-4 border rounded bg-white shadow">
         <div>
-          <label className="block mb-1 font-medium">Cover Type</label>
+          <h2 className="font-semibold text-lg text-blue-600 mb-4">Cover Type</h2>
           <select
             value={coverType}
             onChange={(e) => setCoverType(e.target.value as "Comprehensive" | "ThirdParty")}
