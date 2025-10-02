@@ -94,7 +94,7 @@ const AdminVehicles: React.FC = () => {
             type="text"
             placeholder="Search by registration, make, or model..."
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => setSearch(e.target.value.toUpperCase())}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
           <button
