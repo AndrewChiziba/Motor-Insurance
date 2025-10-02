@@ -2,7 +2,7 @@ import api from "./axios";
 
 export interface RegisterPayload {
   email: string;
-  fullname: string; // Note: backend might expect 'fullname' in request
+  fullname: string; 
   password: string;
 }
 
@@ -17,7 +17,7 @@ export interface LoginResponse {
   expires: string;
   role: string;
   email: string;
-  fullName: string; // Backend returns 'fullName'
+  fullName: string; 
 }
 
 export async function registerUser(payload: RegisterPayload) {

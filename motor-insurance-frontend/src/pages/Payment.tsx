@@ -121,8 +121,8 @@ export default function PaymentPage() {
       }
 
       navigate("/dashboard");
-    } catch (err) {
-      console.error(err);
+    } catch{
+      // console.error(err);
       toast.error("Payment failed. Please try again.", {
         className: "toast-text",
         position: "top-center",
