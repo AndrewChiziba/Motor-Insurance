@@ -22,10 +22,12 @@ const Navbar: React.FC = () => {
   };
 
   const handleLogoClick = () => {
-    navigate('/search');
+    if(localStorage.getItem("role")=="Client")
+      navigate('/search');
   };
    const handleAvatarClick = () => {
-    navigate('/dashboard');
+    if(localStorage.getItem("role")=="Client")
+      navigate('/dashboard');
   };
 
   return (

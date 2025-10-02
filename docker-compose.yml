@@ -1,0 +1,92 @@
+services:
+  # PostgreSQL Database
+  postgres-db:
+    image: postgres:17
+    container_name: motor-insurance-db
+    environment:
+      POSTGRES_DB: MotorInsuranceDb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5433:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - motor-insurance-dev
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PGAdmin
+  pgadmin:
+    image: dpage/pgadmin4
+    container_name: motor-insurance-pgadmin
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@mail.com
+      PGADMIN_DEFAULT_PASSWORD: admin
+    ports:
+      - "5051:80"
+    networks:
+      - motor-insurance-dev
+    depends_on:
+      - postgres-db
+
+  # .NET 9 Backend API 
+  dotnet-api:
+    build:
+      context: ./motor-insurance-backend
+      dockerfile: Dockerfile
+    container_name: motor-insurance-api
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__DefaultConnection: "Host=postgres-db;Database=MotorInsuranceDb;Username=postgres;Password=postgres"
+      Jwt__Key: "DevelopmentJwtKeyForTesting123456789"
+      Jwt__Issuer: "MotorInsuranceAPI"
+      Jwt__Audience: "MotorInsuranceClients"
+      Jwt__ExpiryMinutes: "120"
+      AdminUser__Email: "admin@mail.com"
+      AdminUser__Password: "Password1234!"
+    ports:
+      - "8081:8080"
+    volumes:
+      - ./motor-insurance-backend:/src
+      - ~/.nuget/packages:/home/appuser/.nuget/packages:ro
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - motor-insurance-dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/health"] 
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # React Frontend - external port only changed
+  react-frontend:
+    build:
+      context: ./motor-insurance-frontend
+      dockerfile: Dockerfile
+      target: development
+    container_name: motor-insurance-frontend
+    environment:
+      VITE_API_URL: http://localhost:8081  # External backend URL
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./motor-insurance-frontend:/app
+      - /app/node_modules
+    depends_on:
+      - dotnet-api
+    networks:
+      - motor-insurance-dev
+
+volumes:
+  postgres_data:
+
+networks:
+  motor-insurance-dev:
+    driver: bridge
+    name: motor-insurance-dev-network

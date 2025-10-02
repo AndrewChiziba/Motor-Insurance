@@ -120,7 +120,7 @@ export default function PaymentPage() {
         });
       }
 
-      navigate("/Search");
+      navigate("/dashboard");
     } catch (err) {
       console.error(err);
       toast.error("Payment failed. Please try again.", {

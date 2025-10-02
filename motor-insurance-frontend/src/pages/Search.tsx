@@ -82,7 +82,7 @@ const Search = () => {
           <div className="flex gap-2 mb-4">
             <input
               type="text"
-              placeholder="Enter Registration Number, e.g. ABC1234 or BBA1212"
+              placeholder="Enter Registration Number, e.g. ABC123 or BBA1212"
               value={registration}
               onChange={(e) => setRegistration(e.target.value.toUpperCase())}
               className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
@@ -171,7 +171,7 @@ const Search = () => {
             </label>
             <input
               type="text"
-              placeholder="e.g. ABC123"
+              placeholder="e.g. BAT1340"
               value={newVehicle.registrationNumber}
               onChange={(e) => setNewVehicle({ ...newVehicle, registrationNumber: e.target.value })}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 uppercase"

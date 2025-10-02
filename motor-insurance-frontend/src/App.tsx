@@ -112,7 +112,7 @@ function App() {
         <Route
           path="/search"
           element={
-            <ProtectedRoute allowedRoles={["Client"]}>
+            <ProtectedRoute allowedRoles={["Client", ""]}>
               <Search />
             </ProtectedRoute>
           }

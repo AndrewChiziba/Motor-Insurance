@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Mvc;
 using InsuranceApi.DTOs;
 using InsuranceApi.Interfaces;
 using System.Security.Claims;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InsuranceApi.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/[controller]")] 
+    [Authorize]
     public class VehiclesController : ControllerBase
     {
         private readonly IVehicleService _vehicleService;
@@ -18,6 +20,7 @@ namespace InsuranceApi.Controllers
 
         // Get all vehicles
         [HttpGet]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<IEnumerable<VehicleDto>>> GetAll()
         {
             var vehicles = await _vehicleService.GetAllAsync();
@@ -26,6 +29,7 @@ namespace InsuranceApi.Controllers
 
         // Get vehicle by ID
         [HttpGet("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<VehicleDto>> GetById(Guid id)
         {
             var vehicle = await _vehicleService.GetByIdAsync(id);
@@ -52,6 +56,7 @@ namespace InsuranceApi.Controllers
 
         // Update vehicle
         [HttpPut("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<ActionResult<VehicleDto>> Update(Guid id, [FromBody] UpdateVehicleDto updateDto)
         {
             var updatedVehicle = await _vehicleService.UpdateAsync(id, updateDto);
@@ -61,6 +66,7 @@ namespace InsuranceApi.Controllers
 
         // Delete vehicle
         [HttpDelete("{id:guid}")]
+        [Authorize(Roles = "Admin")]
         public async Task<IActionResult> Delete(Guid id)
         {
             var deleted = await _vehicleService.DeleteAsync(id);

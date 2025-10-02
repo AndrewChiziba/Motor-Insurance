@@ -5,6 +5,6 @@ export const VehicleType = {
 } as const;
 
 export const InsuranceType = {
-  0: "Third Party",
-  1: "Comprehensive"
+  0: "Comprehensive",
+  1: "Third Party"
 } as const;
