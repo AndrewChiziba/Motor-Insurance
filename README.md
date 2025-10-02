@@ -35,7 +35,7 @@ A modern, full-stack motor insurance management system built with .NET 9, and Po
 ### **One-Command Setup**
 ```bash
 # Clone the repository
-git clone 
+git clone https://github.com/AndrewChiziba/Motor-Insurance.git
 cd Motor-Insurance
 
 # Start the entire application
